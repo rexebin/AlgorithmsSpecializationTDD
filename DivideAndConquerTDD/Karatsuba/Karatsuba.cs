@@ -12,11 +12,10 @@ namespace DivideAndConquerTDD.Karatsuba
         {
             Console.WriteLine("Karatcuba executed: {0} times", _performanceCount);
         }
-        
+
         /**
          * Karatsuba in strings, for out of range large numbers.
          */
-
         public string KaratsubaCalc(string number1, string number2)
         {
             if (number1.Length < 2 || number2.Length < 2)
@@ -27,7 +26,7 @@ namespace DivideAndConquerTDD.Karatsuba
 
             if (number1.Length % 2 != 0 || number2.Length % 2 != 0)
             {
-                return MakeEvenAndKaratsubaCalc(number1, number2);
+                return MakeEvenDigitsAndSameLengthAndKaratsubaCalc(number1, number2);
             }
 
             var inputLength = number1.Length;
@@ -63,16 +62,31 @@ namespace DivideAndConquerTDD.Karatsuba
                 AddTailingZerosByGivenAmount(Subtract(Subtract(aPlusBTimesCPlusD, ac), bd), n / 2)), bd);
         }
 
-        private string MakeEvenAndKaratsubaCalc(string number1, string number2)
+        private string MakeEvenDigitsAndSameLengthAndKaratsubaCalc(string number1, string number2)
         {
-            var digit1 = number1.Length;
-            var digit2 = number2.Length;
+            number1 = MakeEvenDigits(number1, out var padding1, out var digit1);
+            number2 = MakeEvenDigits(number2, out var padding2, out var digit2);
             var diff = digit1 - digit2;
             var larger = digit1 > digit2 ? number1 : number2;
             var smaller = digit1 > digit2 ? number2 : number1;
-            larger = AddTailingZerosByGivenAmount(larger, 1);
-            smaller = AddTailingZerosByGivenAmount(smaller, Math.Abs(diff) + 1);
-            return RemoveTailingZerosByGivenAmount(KaratsubaCalc(larger, smaller), Math.Abs(diff) + 2);
+            smaller = AddTailingZerosByGivenAmount(smaller, Math.Abs(diff));
+            return RemoveTailingZerosByGivenAmount(KaratsubaCalc(larger, smaller),
+                Math.Abs(diff) + padding1 + padding2);
+        }
+
+        private string MakeEvenDigits(string number, out int padding, out int digit)
+        {
+            padding = 0;
+            digit = number.Length;
+            if (digit % 2 == 0)
+            {
+                return number;
+            }
+
+            number = AddTailingZerosByGivenAmount(number, 1);
+            digit++;
+            padding++;
+            return number;
         }
 
         private string AddTailingZerosByGivenAmount(string input, int amount)
@@ -88,70 +102,83 @@ namespace DivideAndConquerTDD.Karatsuba
                 input = input.Substring(0, input.Length - 1);
             return input;
         }
-        
+
         /**
          * Karatsuba in integers.
          */
-
-        public int KaratsubaCalc(int number1, int number2)
+        public long KaratsubaCalc(long number1, long number2)
         {
             if (number1 < 10 || number2 < 10)
                 return number1 * number2;
 
             if (number1.ToString().Length % 2 != 0 || number2.ToString().Length % 2 != 0)
             {
-                return MakeEvenAndKaratsubaCalc(number1, number2);
+                return MakeEvenDigitsAndSameLengthAndKaratsubaCalc(number1, number2);
             }
 
             var inputLength = number1.ToString().Length;
             var result = KaratsubaFinalSum(CalcAAndC(number1, number2),
                 CalcAPlusBTimesCPlusD(number1, number2), CalcBAndD(number1, number2), inputLength);
             _performanceCount++;
+            Console.WriteLine("Karatcuba: {0}, {1},{2}", number1, number2, result);
             return result;
         }
 
-        private static int KaratsubaFinalSum(int ac, int aPlusBTimesCPlusD, int bd, int inputLength)
+        private static long KaratsubaFinalSum(long ac, long aPlusBTimesCPlusD, long bd, int inputLength)
         {
-            return (int) Math.Pow(10, inputLength) * ac +
-                   (int) Math.Pow(10, inputLength / 2) * (aPlusBTimesCPlusD - ac - bd) +
+            return (long) Math.Pow(10, inputLength) * ac +
+                   (long) Math.Pow(10, inputLength / 2) * (aPlusBTimesCPlusD - ac - bd) +
                    bd;
         }
 
-        private int MakeEvenAndKaratsubaCalc(int number1, int number2)
+        private long MakeEvenDigitsAndSameLengthAndKaratsubaCalc(long number1, long number2)
         {
-            var digit1 = number1.ToString().Length;
-            var digit2 = number2.ToString().Length;
+            number1 = MakeEvenDigits(number1, out var padding1, out var digit1);
+            number2 = MakeEvenDigits(number2, out var padding2, out var digit2);
             var diff = digit1 - digit2;
-            var padding = Math.Abs(diff) + 1;
-            var adjust = (int) Math.Pow(10, padding);
-            return (diff > 0
-                ? KaratsubaCalc(number1 * 10, number2 * adjust)
-                : KaratsubaCalc(number1 * adjust, number2 * 10)) / adjust / 10;
+            var adjust = (int) Math.Pow(10, Math.Abs(diff));
+            return (diff > 0 ? KaratsubaCalc(number1, number2 * adjust) : KaratsubaCalc(number1 * adjust, number2)) /
+                   (long) Math.Pow(10, padding1 + padding2 + Math.Abs(diff));
         }
 
-        public int CalcAAndC(int number1, int number2)
+        private long MakeEvenDigits(long number, out int padding, out int digit)
+        {
+            padding = 0;
+            digit = number.ToString().Length;
+            if (digit % 2 == 0)
+            {
+                return number;
+            }
+
+            number *= 10;
+            digit++;
+            padding++;
+            return number;
+        }
+
+        public long CalcAAndC(long number1, long number2)
         {
             return KaratsubaCalc(Divide(number1)[0], Divide(number2)[0]);
         }
 
-        public int CalcBAndD(int number1, int number2)
+        public long CalcBAndD(long number1, long number2)
         {
             return KaratsubaCalc(Divide(number1)[1], Divide(number2)[1]);
         }
 
-        public int CalcAPlusBTimesCPlusD(int number1, int number2)
+        public long CalcAPlusBTimesCPlusD(long number1, long number2)
         {
             var div1 = Divide(number1);
             var div2 = Divide(number2);
             return KaratsubaCalc(div1.Sum(), div2.Sum());
         }
 
-        private List<int> Divide(int i)
+        private List<long> Divide(long i)
         {
             var s = i.ToString();
             var firstHalf = s.Substring(0, s.Length / 2);
             var secondHalf = s.Substring(s.Length / 2, s.Length - s.Length / 2);
-            return new List<int> {Int32.Parse(firstHalf), Int32.Parse(secondHalf)};
+            return new List<long> {long.Parse(firstHalf), long.Parse(secondHalf)};
         }
 
         private List<string> Divide(string i)
