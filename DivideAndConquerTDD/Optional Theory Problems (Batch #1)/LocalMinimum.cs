@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace DivideAndConquerTDD
+﻿namespace DivideAndConquerTDD
 {
     public record Dimension(int Top, int Bottom, int Left, int Right, int VCut, int lastHIndex);
 
@@ -12,16 +10,15 @@ namespace DivideAndConquerTDD
             var vIndex = GetVIndex(input, range, hIndex);
             if (vIndex == range.VCut)
                 return input[range.VCut][hIndex];
-
             range = ResetHorizontalBoundary(range, hIndex);
             range = ResetVerticalBoundary(range, vIndex);
-            range = range with{VCut = vIndex};
             return GetLocalMinimum(input, range);
         }
 
         private static Dimension ResetVerticalBoundary(Dimension range, int vIndex)
         {
-            return vIndex > range.VCut ? range with {Top = range.VCut + 1} : range with {Bottom = range.VCut - 1};
+            var result = vIndex > range.VCut ? range with {Top = range.VCut + 1} : range with {Bottom = range.VCut - 1};
+            return result with{VCut = vIndex};
         }
 
         private static Dimension ResetHorizontalBoundary(Dimension range, int hIndex)
@@ -29,7 +26,8 @@ namespace DivideAndConquerTDD
             if (range.lastHIndex <= 0)
                 return range with{lastHIndex = hIndex};
 
-            return hIndex > range.lastHIndex ? range with{Left = hIndex + 1} : range with{Right = hIndex - 1};
+            var result = hIndex > range.lastHIndex ? range with{Left = hIndex + 1} : range with{Right = hIndex - 1};
+            return result with { lastHIndex = hIndex};
         }
 
         private int GetVIndex(int[][] input, Dimension range, int hIndex)
@@ -43,7 +41,7 @@ namespace DivideAndConquerTDD
         private int GetHIndex(int[][] input, Dimension range)
         {
             var hIndex = range.Left;
-            for (int i = hIndex + 1; i <= range.Right; i++)
+            for (var i = hIndex + 1; i <= range.Right; i++)
                 hIndex = input[range.VCut][hIndex] > input[range.VCut][i] ? i : hIndex;
             return hIndex;
         }
