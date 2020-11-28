@@ -77,13 +77,13 @@ namespace DivideAndConquerTDD
                 new[] {29, 64, 16, 8, 50, 14, 1, 25, 26, 73},
                 new[] {97, 37, 13, 20, 4, 75, 98, 80, 48, 12},
                 new[] {33, 27, 42, 74, 95, 35, 57, 53, 96, 60},
-                new[] {59, 86, 76, 40, 6, 11, 77, 49, 93, 61},
+                new[] {59, 25, 76, 40, 6, 11, 77, 49, 93, 61},
                 new[] {5, 72, 9, 91, 68, 30, 39, 69, 99, 21},
                 new[] {52, 31, 28, 34, 3, 81, 18, 62, 10, 71},
                 new[] {66, 24, 44, 54, 56, 85, 84, 22, 47, 63},
                 new[] {65, 36, 83, 41, 15, 19, 87, 78, 70, 32},
             };
-            var expected = 22;
+            var expected = 24;
             var sut = new LocalMinimum();
             var result = sut.GetLocalMinimum(input, range);
             Assert.AreEqual(expected, result);
