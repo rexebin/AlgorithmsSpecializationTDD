@@ -1,6 +1,6 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
-using System.Xml.Xsl;
 
 namespace DivideAndConquerTDD.AssignmentThree
 {
@@ -8,7 +8,8 @@ namespace DivideAndConquerTDD.AssignmentThree
     {
         FirstElement,
         LastElement,
-        Median
+        Median,
+        Random
     }
 
     public class QuickSort
@@ -58,6 +59,7 @@ namespace DivideAndConquerTDD.AssignmentThree
             {
                 PivotMode.LastElement => SwapLastAndFirstElement(input, left, right),
                 PivotMode.Median => SwapMedianWithFirstElement(input, left, right),
+                PivotMode.Random => SwapRandomElementWithFirstElement(input, left, right),
                 _ => input
             };
         }
@@ -94,6 +96,15 @@ namespace DivideAndConquerTDD.AssignmentThree
             var firstElement = input[left];
             input[left] = input[medianIndex];
             input[medianIndex] = firstElement;
+            return input;
+        }
+
+        public int[] SwapRandomElementWithFirstElement(int[] input, int left, int right)
+        {
+            var randomIndex = new Random().Next(left, right);
+            var firstElement = input[left];
+            input[left] = input[randomIndex];
+            input[randomIndex] = firstElement;
             return input;
         }
 

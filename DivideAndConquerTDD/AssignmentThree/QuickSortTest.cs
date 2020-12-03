@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System;
+using NUnit.Framework;
 
 namespace DivideAndConquerTDD.AssignmentThree
 {
@@ -134,6 +135,14 @@ namespace DivideAndConquerTDD.AssignmentThree
             var sut = new QuickSort();
             var count = sut.Sort(PivotMode.Median);
             Assert.AreEqual(156383, count);
+        }
+        
+        [Test]
+        public void ShouldReadArrayFromText_UseRandomElementAsPivot_SortAndReturnCompareCount()
+        {
+            var sut = new QuickSort();
+            var count = sut.Sort(PivotMode.Random);
+            Console.WriteLine(count);
         }
     }
 }
