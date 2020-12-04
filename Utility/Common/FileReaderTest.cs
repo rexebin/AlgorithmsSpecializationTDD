@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
 
-namespace DivideAndConquerTDD.Common
+namespace Utility.Common
 {
     public class FileReaderTest
     {

@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
 
-namespace DivideAndConquerTDD
+namespace DivideAndConquerTDD.OptionalTheoryProblemsBatchOne
 {
     /**
      * You are given as input an unsorted array of n distinct numbers, where n is a power of 2.

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using DivideAndConquerTDD.Common;
+using Utility.Common;
 
 namespace DivideAndConquerTDD.AssignmentTwo
 {

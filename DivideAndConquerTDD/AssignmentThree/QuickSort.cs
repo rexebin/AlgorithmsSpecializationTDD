@@ -1,7 +1,6 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
-using DivideAndConquerTDD.Common;
+using Utility.Common;
 
 namespace DivideAndConquerTDD.AssignmentThree
 {

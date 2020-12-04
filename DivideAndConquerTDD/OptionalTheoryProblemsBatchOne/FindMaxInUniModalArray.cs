@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 
-namespace DivideAndConquerTDD
+namespace DivideAndConquerTDD.OptionalTheoryProblemsBatchOne
 {
     public class FindMaxInUniModalArray
     {

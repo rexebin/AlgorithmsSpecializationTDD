@@ -1,7 +1,6 @@
 ﻿using NUnit.Framework;
-using NUnit.Framework.Internal;
 
-namespace DivideAndConquerTDD
+namespace DivideAndConquerTDD.OptionalTheoryProblemsBatchOne
 {
     /**
      * You are given an n by n grid of distinct numbers. A number is a local minimum if it is smaller than all of its

@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace DivideAndConquerTDD.Common
+namespace Utility.Common
 {
     public class FileReader
     {

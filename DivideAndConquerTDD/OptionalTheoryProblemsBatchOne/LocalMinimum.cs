@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace DivideAndConquerTDD
+﻿namespace DivideAndConquerTDD.OptionalTheoryProblemsBatchOne
 {
     public record Dimension(int Top, int Bottom, int Left, int Right,
         int LastVIndex, int LastHIndex);

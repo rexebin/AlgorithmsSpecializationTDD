@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using DivideAndConquerTDD.Common;
+using Utility.Common;
 
 namespace DivideAndConquerTDD.AssignmentFour
 {

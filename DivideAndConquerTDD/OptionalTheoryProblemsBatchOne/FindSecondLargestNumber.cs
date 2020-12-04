@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace DivideAndConquerTDD
+namespace DivideAndConquerTDD.OptionalTheoryProblemsBatchOne
 {
     public class FindSecondLargestNumber
     {

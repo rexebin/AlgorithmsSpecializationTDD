@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
 
-namespace DivideAndConquerTDD
+namespace DivideAndConquerTDD.OptionalTheoryProblemsBatchOne
 {
     /**
      * You are given a sorted (from smallest to largest) array A of n distinct integers which can be positive,

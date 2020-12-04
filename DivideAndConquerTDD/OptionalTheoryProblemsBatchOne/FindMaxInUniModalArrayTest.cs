@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
 
-namespace DivideAndConquerTDD
+namespace DivideAndConquerTDD.OptionalTheoryProblemsBatchOne
 {
     /**
      * You are a given a unimodal array of n distinct elements, meaning that its entries are in increasing order up
