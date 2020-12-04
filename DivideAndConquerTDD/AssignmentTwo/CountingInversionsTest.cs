@@ -34,14 +34,6 @@ namespace DivideAndConquerTDD.AssignmentTwo
         }
 
         [Test]
-        public void ShouldGetIntegerArrayPath()
-        {
-            var sut = new CountingInversions();
-            var path = sut.GetPath();
-            Assert.True(path.Contains("DivideAndConquerTDD\\DivideAndConquerTDD\\AssignmentTwo\\IntegerArray.txt"));
-        }
-
-        [Test]
         public void GivenTextFile_ShouldReturnSortedArrayAndCountInversions()
         {
             var sut = new CountingInversions();

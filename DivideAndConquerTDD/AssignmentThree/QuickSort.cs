@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using DivideAndConquerTDD.Common;
 
 namespace DivideAndConquerTDD.AssignmentThree
 {
@@ -15,6 +16,19 @@ namespace DivideAndConquerTDD.AssignmentThree
     public class QuickSort
     {
         private long _count;
+
+        public long GetCount()
+        {
+            return _count;
+        }
+
+        public long Sort(PivotMode mode = PivotMode.FirstElement)
+        {
+            var input = new FileReader().ReadFile("AssignmentThree", "QuickSort.txt")
+                .Select(int.Parse).ToArray();
+            var sorted = Sort(input, 0, input.Length, mode);
+            return _count;
+        }
 
         public int[] Sort(int[] input, int left, int right, PivotMode mode = PivotMode.FirstElement)
         {
@@ -62,24 +76,6 @@ namespace DivideAndConquerTDD.AssignmentThree
                 PivotMode.Random => SwapRandomElementWithFirstElement(input, left, right),
                 _ => input
             };
-        }
-
-        public long Sort(PivotMode mode = PivotMode.FirstElement)
-        {
-            var input = File.ReadAllLines(GetPath())
-                .Select(int.Parse).ToArray();
-            var sorted = Sort(input, 0, input.Length, mode);
-            return _count;
-        }
-
-        private string GetPath()
-        {
-            return Path.GetFullPath(@"..\..\..\AssignmentThree\QuickSort.txt");
-        }
-
-        public long GetCount()
-        {
-            return _count;
         }
 
         public int[] SwapLastAndFirstElement(int[] input, int left, int right)

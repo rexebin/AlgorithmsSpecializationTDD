@@ -1,15 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
+﻿using System.Collections.Generic;
 using System.Linq;
-using NUnit.Framework;
+using DivideAndConquerTDD.Common;
 
 namespace DivideAndConquerTDD.AssignmentTwo
 {
     public class CountingInversions
     {
         private long _inversions;
+
+        public long GetInversions()
+        {
+            return _inversions;
+        }
+
+        public int[] SortAndCountInversions()
+        {
+            var input = new FileReader().ReadFile("AssignmentTwo", "integerArray.txt")
+                .Select(int.Parse).ToArray();
+            return SortAndCountInversions(input);
+        }
 
         public int[] SortAndCountInversions(int[] input)
         {
@@ -21,26 +30,7 @@ namespace DivideAndConquerTDD.AssignmentTwo
             var right = SortAndCountInversions(input.Skip(length / 2).Take(length - length / 2).ToArray());
             return MergeAndSort(left, right);
         }
-
-        public int[] SortAndCountInversions()
-        {
-            var input = File.ReadAllLines(GetPath())
-                .Select(int.Parse).ToArray();
-
-            if (input.Length == 1)
-                return input;
-
-            var length = input.Length;
-            var left = SortAndCountInversions(input.Take(length / 2).ToArray());
-            var right = SortAndCountInversions(input.Skip(length / 2).Take(length - length / 2).ToArray());
-            return MergeAndSort(left, right);
-        }
-
-        public long GetInversions()
-        {
-            return _inversions;
-        }
-
+        
         public int[] MergeAndSort(int[] arrayB, int[] arrayC)
         {
             var mergedArray = new List<int>();
@@ -74,13 +64,7 @@ namespace DivideAndConquerTDD.AssignmentTwo
                 j++;
             }
 
-
             return mergedArray.ToArray();
-        }
-
-        public string GetPath()
-        {
-            return Path.GetFullPath(@"..\..\..\AssignmentTwo\IntegerArray.txt");
         }
     }
 }

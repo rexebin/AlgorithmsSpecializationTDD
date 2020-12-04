@@ -70,7 +70,6 @@ namespace DivideAndConquerTDD
             }
         }
 
-
         private void SaveSmallNumber(int largerNumber, int smallerNumber)
         {
             if (_smallerNumbers.TryGetValue(largerNumber, out var smallerNumbers))
@@ -81,7 +80,6 @@ namespace DivideAndConquerTDD
 
             _smallerNumbers.Add(largerNumber, new List<int> {smallerNumber});
         }
-
 
         public bool IsCompareCountWithinConstraint(int[] numbers)
         {
