@@ -15,7 +15,7 @@ namespace DivideAndConquerTDD.AssignmentTwo
 
         public int[] SortAndCountInversions()
         {
-            var input = new FileReader().ReadFile("AssignmentTwo", "integerArray.txt")
+            var input = new FileReader().ReadFile("AssignmentTwo", "IntegerArray.txt")
                 .Select(int.Parse).ToArray();
             return SortAndCountInversions(input);
         }

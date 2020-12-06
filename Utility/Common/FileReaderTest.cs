@@ -11,7 +11,7 @@ namespace Utility.Common
             var fileName = "test.txt";
             var sut = new FileReader();
             var result = sut.GetPath(folderName, fileName);
-            Assert.True(result.EndsWith($"\\{folderName}\\{fileName}"));
+            Assert.True(result.EndsWith($"/{folderName}/{fileName}"));
         }
 
         [Test]

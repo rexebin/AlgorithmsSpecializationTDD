@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace Utility.Common
 {
@@ -6,7 +7,7 @@ namespace Utility.Common
     {
         public string GetPath(string folderName, string fileName)
         {
-            return Path.GetFullPath(@$"..\..\..\{folderName}\{fileName}");
+            return Path.GetFullPath(@$"../../../{folderName}/{fileName}", Environment.CurrentDirectory);
         }
 
         public string[] ReadFile(string folderName, string fileName)
