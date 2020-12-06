@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using NUnit.Framework;
 using Utility.Common;
 
 namespace GraphSearchShortestPathsDataStructures.AssignmentOne
@@ -29,97 +27,82 @@ namespace GraphSearchShortestPathsDataStructures.AssignmentOne
 
     public class StrongComponents
     {
-        private Dictionary<int, Vertex> graph;
+        public Dictionary<int, bool> Status { get; set; }
+        public Dictionary<int, int> Leads { get; set; }
+        public Dictionary<int, int> FinishingTimes { get; set; }
         private int _finishingTime;
-        private Vertex? _lead;
+        private int _lead;
 
-        public StrongComponents(Dictionary<int, Vertex> graph)
-        {
-            this.graph = graph;
-        }
-
-        public Dictionary<int, Vertex> GetGraph()
-        {
-            return graph;
-        }
-
-        public void DepthFirstSearch(bool isReverse)
+        public void DepthFirstSearch(Dictionary<int, int[]> graph)
         {
             _finishingTime = 0;
-            _lead = null;
-            if (!isReverse)
-            {
-                foreach (var keyValuePair in graph)
-                {
-                    keyValuePair.Value.Tails.Clear();
-                    keyValuePair.Value.FinishTime = 0;
-                }
-            }
+            _lead = 0;
 
+            Status = graph.ToDictionary(e => e.Key, e => false);
+            Leads = graph.ToDictionary(e => e.Key, e => 0);
+            FinishingTimes = graph.ToDictionary(e => e.Key, e => 0);
             for (var i = graph.Count; i >= 1; i--)
             {
-                if (graph[i].IsVisited)
+                if (Status[i])
                 {
                     continue;
                 }
 
-                _lead = graph[i];
-                DepthFirstSearch(graph[i], isReverse);
+                _lead = i;
+                DepthFirstSearch(graph, i);
             }
         }
 
-        private void DepthFirstSearch(Vertex vertexToSearch, bool isReverse)
+        private void DepthFirstSearch(Dictionary<int, int[]> graph, int vertexToSearch)
         {
-            vertexToSearch.IsVisited = true;
-            foreach (var vertex in (isReverse ? vertexToSearch.Tails : vertexToSearch.Heads))
+            Status[vertexToSearch] = true;
+            foreach (var vertex in graph[vertexToSearch])
             {
-                if (vertex.IsVisited)
+                if (Status[vertex])
+                {
                     continue;
-                DepthFirstSearch(vertex, isReverse);
+                }
+
+                DepthFirstSearch(graph, vertex);
             }
-            
-            vertexToSearch.Leader = _lead;
+
+            Leads[vertexToSearch] = _lead;
             _finishingTime++;
-            vertexToSearch.FinishTime = _finishingTime;
+            FinishingTimes[vertexToSearch] = _finishingTime;
         }
 
-        public void FinishTimeToKeyAndResetStatus()
+        public Dictionary<int, int[]> FinishTimeToKeyAndResetStatus(Dictionary<int, int[]> originalGraph)
         {
-            // var newGraph = new Dictionary<int, Vertex>();
-            // for (int i = 1; i <= graph.Count; i++)
-            // {
-            //     graph[i].IsVisited = false;
-            //     newGraph.Add(graph[i].FinishTime, graph[i]);
-            // }
-            //
-            // graph = newGraph;
-            graph = graph.ToDictionary(entry => entry.Value.FinishTime,
-                entry =>
+            var newGraph = new Dictionary<int, int[]>();
+            for (int i = 1; i <= originalGraph.Count; i++)
+            {
+                if (FinishingTimes.TryGetValue(i, out var vertex))
                 {
-                    entry.Value.IsVisited = false;
-                    return entry.Value;
-                });
+                    newGraph.Add(vertex, originalGraph[i].Select(x => FinishingTimes[x]).ToArray());
+                }
+            }
+
+            return newGraph;
+            // graph = graph.ToDictionary(entry => entry.Value.FinishTime,
+            //     entry =>
+            //     {
+            //         entry.Value.IsVisited = false;
+            //         return entry.Value;
+            //     });
         }
 
         public int[] GetStrongComponentsCounts()
         {
-            return graph.Select(x => x.Value)
-                .GroupBy(x => x.Leader)
-                .Select(x => x.Count())
-                .OrderByDescending(x => x)
-                .ToArray();
+            return Leads.GroupBy(x => x.Value).Select(x => x.Count()).ToArray();
         }
 
-        public static Dictionary<int, Vertex> ReadFile()
+        public static int[][] ReadFile()
         {
-            var array = new FileReader()
+            return new FileReader()
                 .ReadFile("AssignmentOne", "SCC.txt")
                 .Select(x => x.TrimEnd().Split(' ')
                     .Select(x => int.Parse(x))
-                    .ToArray())
-                .Where(x => x[0] != x[1]);
-            var graph = TransformToGraph(array.ToArray());
-            return graph;
+                    .ToArray()).ToArray();
         }
 
         public static Dictionary<int, int[]> GroupByTails(int[][] array)
@@ -140,42 +123,56 @@ namespace GraphSearchShortestPathsDataStructures.AssignmentOne
                 );
         }
 
-        public static Dictionary<int, Vertex> TransformToGraph(int[][] array)
+
+        // public static Dictionary<int, Vertex> TransformToGraph(int[][] array)
+        // {
+        //     var groupByTails = GroupByTails(array);
+        //     var groupByHeads = GroupByHeads(array);
+        //     var merged = groupByTails.ToDictionary(e => e.Key,
+        //         e =>
+        //             new Vertex(e.Key, new List<Vertex>(), new List<Vertex>(), false, 0, null));
+        //     foreach (var heads in groupByHeads.Where(keyValuePair => !merged.TryGetValue(keyValuePair.Key, out _)))
+        //     {
+        //         merged.TryAdd(heads.Key,
+        //             new Vertex(heads.Key, new List<Vertex>(),
+        //                 new List<Vertex>(), false, 0, null));
+        //     }
+        //
+        //     foreach (var vertex in merged)
+        //     {
+        //         if (groupByTails.TryGetValue(vertex.Key, out var allHeads))
+        //         {
+        //             foreach (var headNo in allHeads)
+        //             {
+        //                 if (merged.TryGetValue(headNo, out var head))
+        //                     vertex.Value.Heads.Add(head);
+        //             }
+        //         }
+        //
+        //         if (groupByHeads.TryGetValue(vertex.Key, out var allTails))
+        //         {
+        //             foreach (var tailNo in allTails)
+        //             {
+        //                 if (merged.TryGetValue(tailNo, out var tail))
+        //                     vertex.Value.Tails.Add(tail);
+        //             }
+        //         }
+        //     }
+        //
+        //     return merged;
+        // }
+        public void GetStrongComponents(int[][] fileInput)
         {
-            var groupByTails = GroupByTails(array);
-            var groupByHeads = GroupByHeads(array);
-            var merged = groupByTails.ToDictionary(e => e.Key,
-                e =>
-                    new Vertex(e.Key, new List<Vertex>(), new List<Vertex>(), false, 0, null));
-            foreach (var heads in groupByHeads.Where(keyValuePair => !merged.TryGetValue(keyValuePair.Key, out _)))
+            var reverseGraph = GroupByHeads(fileInput);
+            for (int i = 1; i <= 875714; i++)
             {
-                merged.TryAdd(heads.Key,
-                    new Vertex(heads.Key, new List<Vertex>(),
-                        new List<Vertex>(), false, 0, null));
-            }
-
-            foreach (var vertex in merged)
-            {
-                if (groupByTails.TryGetValue(vertex.Key, out var allHeads))
+                if (!reverseGraph.TryGetValue(i, out var _))
                 {
-                    foreach (var headNo in allHeads)
-                    {
-                        if (merged.TryGetValue(headNo, out var head))
-                            vertex.Value.Heads.Add(head);
-                    }
-                }
-
-                if (groupByHeads.TryGetValue(vertex.Key, out var allTails))
-                {
-                    foreach (var tailNo in allTails)
-                    {
-                        if (merged.TryGetValue(tailNo, out var tail))
-                            vertex.Value.Tails.Add(tail);
-                    }
+                    reverseGraph.Add(i, new int[0]);
                 }
             }
 
-            return merged;
+            DepthFirstSearch(reverseGraph);
         }
     }
 }
