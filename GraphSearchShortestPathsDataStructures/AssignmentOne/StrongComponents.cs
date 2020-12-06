@@ -102,7 +102,7 @@ namespace GraphSearchShortestPathsDataStructures.AssignmentOne
                 .ReadFile("AssignmentOne", "SCC.txt")
                 .Select(x => x.TrimEnd().Split(' ')
                     .Select(x => int.Parse(x))
-                    .ToArray()).ToArray();
+                    .ToArray()).Where(x => x[0] != x[1]).ToArray();
         }
 
         public static Dictionary<int, int[]> GroupByTails(int[][] array)
