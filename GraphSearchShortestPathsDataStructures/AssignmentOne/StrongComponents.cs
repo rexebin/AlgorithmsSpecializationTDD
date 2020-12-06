@@ -78,7 +78,8 @@ namespace GraphSearchShortestPathsDataStructures.AssignmentOne
             {
                 if (FinishingTimes.TryGetValue(i, out var vertex))
                 {
-                    newGraph.Add(vertex, originalGraph[i].Select(x => FinishingTimes[x]).ToArray());
+                    if (originalGraph.TryGetValue(i, out var originalValue))
+                        newGraph.Add(vertex, originalValue.Select(x => FinishingTimes[x]).ToArray());
                 }
             }
 
@@ -93,7 +94,8 @@ namespace GraphSearchShortestPathsDataStructures.AssignmentOne
 
         public int[] GetStrongComponentsCounts()
         {
-            return Leads.GroupBy(x => x.Value).Select(x => x.Count()).ToArray();
+            return Leads.GroupBy(x => x.Value).Select(x => x.Count())
+                .OrderByDescending(x => x).Take(5).ToArray();
         }
 
         public static int[][] ReadFile()
@@ -161,7 +163,7 @@ namespace GraphSearchShortestPathsDataStructures.AssignmentOne
         //
         //     return merged;
         // }
-        public void GetStrongComponents(int[][] fileInput)
+        public int[] GetStrongComponents(int[][] fileInput)
         {
             var reverseGraph = GroupByHeads(fileInput);
             for (int i = 1; i <= 875714; i++)
@@ -173,6 +175,18 @@ namespace GraphSearchShortestPathsDataStructures.AssignmentOne
             }
 
             DepthFirstSearch(reverseGraph);
+            var graph = StrongComponents.GroupByTails(fileInput);
+            var newGraph = FinishTimeToKeyAndResetStatus(graph);
+            for (int i = 1; i <= 875714; i++)
+            {
+                if (!newGraph.TryGetValue(i, out var _))
+                {
+                    newGraph.Add(i, new int[0]);
+                }
+            }
+
+            DepthFirstSearch(newGraph);
+            return GetStrongComponentsCounts();
         }
     }
 }

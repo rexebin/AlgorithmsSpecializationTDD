@@ -232,25 +232,8 @@ namespace GraphSearchShortestPathsDataStructures.AssignmentOne
         public void ShouldReadSCC_ReturnGraph()
         {
             var fileInput = StrongComponents.ReadFile();
-            // var reversedGraph = StrongComponents.GroupByHeads(fileInput);
-            // _sut.DepthFirstSearch(reversedGraph);
-            // var graph = StrongComponents.GroupByTails(fileInput);
-            // var newGraph = _sut.FinishTimeToKeyAndResetStatus(graph);
-            // _sut.DepthFirstSearch(newGraph);
-            // Assert.AreEqual(875714, graph.Count);
-            // _sut = new StrongComponents(graph);
-            // _sut.DepthFirstSearch(true);
-            // graph = _sut.GetGraph();
-            // // Assert.AreEqual(875714, graph.Count);
-            // _sut.FinishTimeToKeyAndResetStatus();
-            // // graph = _sut.GetGraph();
-            // // Assert.AreEqual(875714, graph.Count);
-            // _sut.DepthFirstSearch(false);
-            // // // graph = _sut.GetGraph();
-            // // // Assert.AreEqual(875714, graph.Count);
-            _sut.GetStrongComponents(fileInput);
-            // var result = _sut.GetStrongComponentsCounts();
-            // Assert.AreEqual(new[]{1}, result);
+            var result = _sut.GetStrongComponents(fileInput);
+            Assert.AreEqual(new[] {431699, 968, 459, 312, 211}, result);
         }
     }
 }
