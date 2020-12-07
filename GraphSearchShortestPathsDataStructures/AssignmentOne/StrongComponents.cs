@@ -95,8 +95,7 @@ namespace GraphSearchShortestPathsDataStructures.AssignmentOne
         {
             return edges.GroupBy(x => x.Last())
                 .ToDictionary(e => e.Key,
-                    e =>
-                        e.Select(x => x.First()).ToArray());
+                    e => e.Select(x => x.First()).ToArray());
         }
 
         public Dictionary<int, int[]> ReplaceVertexWithFinishTime(Dictionary<int, int[]> graph)
