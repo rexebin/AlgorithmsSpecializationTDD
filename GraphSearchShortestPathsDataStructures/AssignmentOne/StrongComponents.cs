@@ -104,10 +104,8 @@ namespace GraphSearchShortestPathsDataStructures.AssignmentOne
             foreach (var (key, _) in graph)
             {
                 if (!FinishingTimes.TryGetValue(key, out var finishingTime) || finishingTime == 0) continue;
-                if (graph.TryGetValue(key, out var originalValue))
-                {
-                    result.Add(finishingTime, originalValue.Select(x => FinishingTimes[x]).ToArray());
-                }
+                if (!graph.TryGetValue(key, out var originalValue)) continue;
+                result.Add(finishingTime, originalValue.Select(x => FinishingTimes[x]).ToArray());
             }
 
             return result;
