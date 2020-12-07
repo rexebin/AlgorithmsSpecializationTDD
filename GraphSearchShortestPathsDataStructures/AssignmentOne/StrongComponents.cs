@@ -24,9 +24,9 @@ namespace GraphSearchShortestPathsDataStructures.AssignmentOne
 
         public int[] GetStrongComponents(int[][] fileInput)
         {
-            var reverseGraph = GetReversedGraph(fileInput);
-            reverseGraph = AddMissingVertices(reverseGraph);
-            DepthFirstSearch(reverseGraph);
+            var reversedGraph = GetReversedGraph(fileInput);
+            reversedGraph = AddMissingVertices(reversedGraph);
+            DepthFirstSearch(reversedGraph);
             var graph = GetGraph(fileInput);
             graph = AddMissingVertices(graph);
             graph = ReplaceVertexWithFinishTime(graph);
@@ -88,9 +88,7 @@ namespace GraphSearchShortestPathsDataStructures.AssignmentOne
         {
             return edges.GroupBy(x => x.First())
                 .ToDictionary(e => e.Key,
-                    e =>
-                        e.Select(x => x.Last()).ToArray()
-                );
+                    e => e.Select(x => x.Last()).ToArray());
         }
 
         public static Dictionary<int, int[]> GetReversedGraph(IEnumerable<int[]> edges)
@@ -98,8 +96,7 @@ namespace GraphSearchShortestPathsDataStructures.AssignmentOne
             return edges.GroupBy(x => x.Last())
                 .ToDictionary(e => e.Key,
                     e =>
-                        e.Select(x => x.First()).ToArray()
-                );
+                        e.Select(x => x.First()).ToArray());
         }
 
         public Dictionary<int, int[]> ReplaceVertexWithFinishTime(Dictionary<int, int[]> graph)
