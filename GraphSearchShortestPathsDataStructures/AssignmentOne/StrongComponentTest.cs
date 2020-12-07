@@ -234,6 +234,8 @@ namespace GraphSearchShortestPathsDataStructures.AssignmentOne
             var fileInput = StrongComponents.ReadFile();
             var result = _sut.GetStrongComponents(fileInput);
             Assert.AreEqual(new[] {431699, 968, 459, 312, 211}, result);
+            // Assert.AreEqual(new[] {455659, 8387, 956, 309, 211}, result);
+            // 434821, 968, 459, 313,211
         }
     }
 }

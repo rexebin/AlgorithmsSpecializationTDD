@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Utility.Common;
 
@@ -43,7 +45,7 @@ namespace GraphSearchShortestPathsDataStructures.AssignmentOne
             FinishingTimes = graph.ToDictionary(e => e.Key, e => 0);
             for (var i = graph.Count; i >= 1; i--)
             {
-                if (Status[i])
+                if (Status.TryGetValue(i, out var s) && s)
                 {
                     continue;
                 }
@@ -58,7 +60,7 @@ namespace GraphSearchShortestPathsDataStructures.AssignmentOne
             Status[vertexToSearch] = true;
             foreach (var vertex in graph[vertexToSearch])
             {
-                if (Status[vertex])
+                if (Status.TryGetValue(vertex, out var s) && s)
                 {
                     continue;
                 }
@@ -76,20 +78,18 @@ namespace GraphSearchShortestPathsDataStructures.AssignmentOne
             var newGraph = new Dictionary<int, int[]>();
             for (int i = 1; i <= originalGraph.Count; i++)
             {
-                if (FinishingTimes.TryGetValue(i, out var vertex))
+                if (FinishingTimes.TryGetValue(i, out var vertex) && vertex!=0)
                 {
                     if (originalGraph.TryGetValue(i, out var originalValue))
                         newGraph.Add(vertex, originalValue.Select(x => FinishingTimes[x]).ToArray());
                 }
+                else
+                {
+                    throw new Exception($"Finishing times not available for: {i}");
+                }
             }
 
             return newGraph;
-            // graph = graph.ToDictionary(entry => entry.Value.FinishTime,
-            //     entry =>
-            //     {
-            //         entry.Value.IsVisited = false;
-            //         return entry.Value;
-            //     });
         }
 
         public int[] GetStrongComponentsCounts()
@@ -104,7 +104,7 @@ namespace GraphSearchShortestPathsDataStructures.AssignmentOne
                 .ReadFile("AssignmentOne", "SCC.txt")
                 .Select(x => x.TrimEnd().Split(' ')
                     .Select(x => int.Parse(x))
-                    .ToArray()).Where(x => x[0] != x[1]).ToArray();
+                    .ToArray()).ToArray();
         }
 
         public static Dictionary<int, int[]> GroupByTails(int[][] array)
@@ -124,45 +124,7 @@ namespace GraphSearchShortestPathsDataStructures.AssignmentOne
                         e.Select(x => x.First()).ToArray()
                 );
         }
-
-
-        // public static Dictionary<int, Vertex> TransformToGraph(int[][] array)
-        // {
-        //     var groupByTails = GroupByTails(array);
-        //     var groupByHeads = GroupByHeads(array);
-        //     var merged = groupByTails.ToDictionary(e => e.Key,
-        //         e =>
-        //             new Vertex(e.Key, new List<Vertex>(), new List<Vertex>(), false, 0, null));
-        //     foreach (var heads in groupByHeads.Where(keyValuePair => !merged.TryGetValue(keyValuePair.Key, out _)))
-        //     {
-        //         merged.TryAdd(heads.Key,
-        //             new Vertex(heads.Key, new List<Vertex>(),
-        //                 new List<Vertex>(), false, 0, null));
-        //     }
-        //
-        //     foreach (var vertex in merged)
-        //     {
-        //         if (groupByTails.TryGetValue(vertex.Key, out var allHeads))
-        //         {
-        //             foreach (var headNo in allHeads)
-        //             {
-        //                 if (merged.TryGetValue(headNo, out var head))
-        //                     vertex.Value.Heads.Add(head);
-        //             }
-        //         }
-        //
-        //         if (groupByHeads.TryGetValue(vertex.Key, out var allTails))
-        //         {
-        //             foreach (var tailNo in allTails)
-        //             {
-        //                 if (merged.TryGetValue(tailNo, out var tail))
-        //                     vertex.Value.Tails.Add(tail);
-        //             }
-        //         }
-        //     }
-        //
-        //     return merged;
-        // }
+        
         public int[] GetStrongComponents(int[][] fileInput)
         {
             var reverseGraph = GroupByHeads(fileInput);
@@ -175,7 +137,7 @@ namespace GraphSearchShortestPathsDataStructures.AssignmentOne
             }
 
             DepthFirstSearch(reverseGraph);
-            var graph = StrongComponents.GroupByTails(fileInput);
+            var graph = GroupByTails(fileInput);
             var newGraph = FinishTimeToKeyAndResetStatus(graph);
             for (int i = 1; i <= 875714; i++)
             {
