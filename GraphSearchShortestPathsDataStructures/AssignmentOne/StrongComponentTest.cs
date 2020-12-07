@@ -1,13 +1,13 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
+using System.Threading;
 using NUnit.Framework;
+using static System.Int32;
 
 namespace GraphSearchShortestPathsDataStructures.AssignmentOne
 {
     public class StrongComponentTest
     {
-        private int[][] input =
+        private readonly int[][] _testGraph =
         {
             new[] {1, 4},
             new[] {2, 8},
@@ -27,30 +27,13 @@ namespace GraphSearchShortestPathsDataStructures.AssignmentOne
         [SetUp]
         public void Setup()
         {
-            // var graph = StrongComponents.TransformToGraph(input);
             _sut = new StrongComponents();
         }
 
-
         [Test]
-        public void GivenArrayShouldGroupByFirstNumber()
+        public void GivenEdges_ShouldGetGraph()
         {
-            var array = new[]
-            {
-                new[] {1, 4},
-                new[] {2, 8},
-                new[] {3, 6},
-                new[] {4, 7},
-                new[] {5, 2},
-                new[] {6, 9},
-                new[] {7, 1},
-                new[] {8, 6},
-                new[] {8, 5},
-                new[] {9, 3},
-                new[] {9, 7}
-            };
-
-            var result = StrongComponents.GroupByTails(array);
+            var result = StrongComponents.GetGraph(_testGraph);
             var expected = new Dictionary<int, int[]>()
             {
                 {1, new[] {4}},
@@ -67,24 +50,9 @@ namespace GraphSearchShortestPathsDataStructures.AssignmentOne
         }
 
         [Test]
-        public void GivenArrayShouldGroupByLastNumber()
+        public void GivenEdges_ShouldGetReversedGraph()
         {
-            var array = new[]
-            {
-                new[] {1, 4},
-                new[] {2, 8},
-                new[] {3, 6},
-                new[] {4, 7},
-                new[] {5, 2},
-                new[] {6, 9},
-                new[] {7, 1},
-                new[] {8, 6},
-                new[] {8, 5},
-                new[] {9, 3},
-                new[] {9, 7}
-            };
-
-            var result = StrongComponents.GroupByHeads(array);
+            var result = StrongComponents.GetReversedGraph(_testGraph);
             var expected = new Dictionary<int, int[]>()
             {
                 {1, new[] {7}},
@@ -100,72 +68,11 @@ namespace GraphSearchShortestPathsDataStructures.AssignmentOne
             Assert.AreEqual(expected, result);
         }
 
-        //
-        // [Test]
-        // public void GivenArrayShouldReturnGraph()
-        // {
-        //     var array = new[]
-        //     {
-        //         new[] {1, 4},
-        //         new[] {2, 8},
-        //         new[] {3, 6},
-        //         new[] {4, 7},
-        //         new[] {5, 2},
-        //         new[] {6, 9},
-        //         new[] {7, 1},
-        //         new[] {8, 6},
-        //         new[] {8, 5},
-        //         new[] {9, 3},
-        //         new[] {9, 7}
-        //     };
-        //
-        //     var graph = StrongComponents.TransformToGraph(array);
-        //
-        //     Assert.AreEqual(7, graph[1].Tails.First().OriginalNo);
-        //     Assert.AreEqual(4, graph[1].Heads.First().OriginalNo);
-        //
-        //     Assert.AreEqual(8, graph[2].Heads.First().OriginalNo);
-        //     Assert.AreEqual(5, graph[2].Tails.First().OriginalNo);
-        //
-        //     Assert.AreEqual(6, graph[3].Heads.First().OriginalNo);
-        //     Assert.AreEqual(9, graph[3].Tails.First().OriginalNo);
-        //
-        //     Assert.AreEqual(7, graph[4].Heads.First().OriginalNo);
-        //     Assert.AreEqual(1, graph[4].Tails.First().OriginalNo);
-        //
-        //     Assert.AreEqual(2, graph[5].Heads.First().OriginalNo);
-        //     Assert.AreEqual(8, graph[5].Tails.First().OriginalNo);
-        //
-        //     Assert.AreEqual(9, graph[6].Heads.First().OriginalNo);
-        //     Assert.AreEqual(3, graph[6].Tails.First().OriginalNo);
-        //     Assert.AreEqual(8, graph[6].Tails.Last().OriginalNo);
-        //
-        //     Assert.AreEqual(1, graph[7].Heads.First().OriginalNo);
-        //     Assert.AreEqual(4, graph[7].Tails.First().OriginalNo);
-        //
-        //     Assert.AreEqual(6, graph[8].Heads.First().OriginalNo);
-        //     Assert.AreEqual(5, graph[8].Heads.Last().OriginalNo);
-        //     Assert.AreEqual(2, graph[8].Tails.First().OriginalNo);
-        //
-        //     Assert.AreEqual(3, graph[9].Heads.First().OriginalNo);
-        //     Assert.AreEqual(7, graph[9].Heads.Last().OriginalNo);
-        //     Assert.AreEqual(6, graph[9].Tails.First().OriginalNo);
-        //
-        //     foreach (var vertex in graph)
-        //     {
-        //         Assert.False(vertex.Value.IsVisited);
-        //         Assert.Null(vertex.Value.Leader);
-        //         Assert.AreEqual(0, vertex.Value.FinishTime);
-        //         Assert.AreEqual(vertex.Key, vertex.Value.OriginalNo);
-        //     }
-        // }
-        //
         [Test]
-        public void GivenGroupAndLeadVertex_ShouldMarkFinishingTime()
+        public void GivenGraph_AfterFirstReverseSearch_ShouldMarkFinishingTime()
         {
-            var reversedGraph = StrongComponents.GroupByHeads(input);
+            var reversedGraph = StrongComponents.GetReversedGraph(_testGraph);
             _sut.DepthFirstSearch(reversedGraph);
-
             Assert.AreEqual(1, _sut.FinishingTimes[3]);
             Assert.AreEqual(2, _sut.FinishingTimes[5]);
             Assert.AreEqual(3, _sut.FinishingTimes[2]);
@@ -176,22 +83,15 @@ namespace GraphSearchShortestPathsDataStructures.AssignmentOne
             Assert.AreEqual(7, _sut.FinishingTimes[1]);
             Assert.AreEqual(8, _sut.FinishingTimes[4]);
             Assert.AreEqual(9, _sut.FinishingTimes[7]);
-
-            // Assert.AreEqual(9, graph[3].Leader?.OriginalNo);
-            // Assert.AreEqual(9, graph[5].Leader?.OriginalNo);
-            // Assert.AreEqual(9, graph[2].Leader?.OriginalNo);
-            // Assert.AreEqual(9, graph[8].Leader?.OriginalNo);
-            // Assert.AreEqual(9, graph[6].Leader?.OriginalNo);
-            // Assert.AreEqual(9, graph[9].Leader?.OriginalNo);
         }
 
         [Test]
-        public void GivenFirstReverseSearchResult_ShouldSetFinishTimeToKey()
+        public void GivenGraph_AfterFirstReverseSearch_ShouldReplaceVertexWithFinishingTime()
         {
-            var reversedGraph = StrongComponents.GroupByHeads(input);
+            var reversedGraph = StrongComponents.GetReversedGraph(_testGraph);
             _sut.DepthFirstSearch(reversedGraph);
-            var graph = StrongComponents.GroupByTails(input);
-            var newGraph = _sut.FinishTimeToKeyAndResetStatus(graph);
+            var graph = StrongComponents.GetGraph(_testGraph);
+            var newGraph = _sut.ReplaceVertexWithFinishTime(graph);
             Assert.AreEqual(new[] {8}, newGraph[7]);
             Assert.AreEqual(new[] {4}, newGraph[3]);
             Assert.AreEqual(new[] {5}, newGraph[1]);
@@ -205,12 +105,12 @@ namespace GraphSearchShortestPathsDataStructures.AssignmentOne
 
 
         [Test]
-        public void SearchProcessedGraphInCorrectOrder_ShouldSetLeaders()
+        public void GivenGraph_AfterBothSearch_ShouldSetLeaders_And_GetSCCount()
         {
-            var reversedGraph = StrongComponents.GroupByHeads(input);
+            var reversedGraph = StrongComponents.GetReversedGraph(_testGraph);
             _sut.DepthFirstSearch(reversedGraph);
-            var graph = StrongComponents.GroupByTails(input);
-            var newGraph = _sut.FinishTimeToKeyAndResetStatus(graph);
+            var graph = StrongComponents.GetGraph(_testGraph);
+            var newGraph = _sut.ReplaceVertexWithFinishTime(graph);
             _sut.DepthFirstSearch(newGraph);
             Assert.AreEqual(9, _sut.Leads[9]);
             Assert.AreEqual(9, _sut.Leads[8]);
@@ -224,18 +124,22 @@ namespace GraphSearchShortestPathsDataStructures.AssignmentOne
             Assert.AreEqual(4, _sut.Leads[2]);
             Assert.AreEqual(4, _sut.Leads[3]);
 
-            var strongComponentsCounts = _sut.GetStrongComponentsCounts();
+            var strongComponentsCounts = _sut.GetFiveStrongComponentsCounts();
             Assert.AreEqual(new[] {3, 3, 3}, strongComponentsCounts);
         }
 
         [Test]
-        public void ShouldReadSCC_ReturnGraph()
+        public void GivenSCCFile_ShouldReadAndSearchAndGetFiveLargestSCCounts()
         {
-            var fileInput = StrongComponents.ReadFile();
-            var result = _sut.GetStrongComponents(fileInput);
-            Assert.AreEqual(new[] {431699, 968, 459, 312, 211}, result);
-            // Assert.AreEqual(new[] {455659, 8387, 956, 309, 211}, result);
-            // 434821, 968, 459, 313,211
+            var thread = new Thread(() =>
+            {
+                var fileInput = StrongComponents.ReadFile();
+                var sut = new StrongComponents();
+                var result = sut.GetStrongComponents(fileInput);
+                Assert.AreEqual(new[] {434821, 968, 459, 313, 211}, result);
+            }, MaxValue);
+            thread.Start();
+            thread.Join();
         }
     }
 }
