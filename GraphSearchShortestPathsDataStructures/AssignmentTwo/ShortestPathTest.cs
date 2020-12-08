@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 
 namespace GraphSearchShortestPathsDataStructures.AssignmentTwo
@@ -115,17 +116,9 @@ namespace GraphSearchShortestPathsDataStructures.AssignmentTwo
             var graph = ShortestPath.GetGraph("dijkstraData.txt");
             var sut = new ShortestPath(graph);
             sut.ProcessVertices();
-            //7,37,59,82,99,115,133,165,188,197
-            Assert.AreEqual(2599, sut.ProcessedVertices[7]);
-            Assert.AreEqual(2610, sut.ProcessedVertices[37]);
-            Assert.AreEqual(2947, sut.ProcessedVertices[59]);
-            Assert.AreEqual(2052, sut.ProcessedVertices[82]);
-            Assert.AreEqual(2367, sut.ProcessedVertices[99]);
-            Assert.AreEqual(2399, sut.ProcessedVertices[115]);
-            Assert.AreEqual(2029, sut.ProcessedVertices[133]);
-            Assert.AreEqual(2442, sut.ProcessedVertices[165]);
-            Assert.AreEqual(2505, sut.ProcessedVertices[188]);
-            Assert.AreEqual(3068, sut.ProcessedVertices[197]);
+            var vertices = new[] {7, 37, 59, 82, 99, 115, 133, 165, 188, 197};
+            var shortestPath = new[] {2599, 2610, 2947, 2052, 2367, 2399, 2029, 2442, 2505, 3068};
+            Assert.AreEqual(shortestPath, vertices.Select(v => sut.ProcessedVertices[v]));
         }
     }
 }
