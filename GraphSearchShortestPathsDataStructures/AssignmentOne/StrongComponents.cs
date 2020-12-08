@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Utility.Common;
@@ -38,7 +39,10 @@ namespace GraphSearchShortestPathsDataStructures.AssignmentOne
         {
             for (var i = 1; i <= 875714; i++)
             {
-                if (graph.TryGetValue(i, out _)) continue;
+                if (graph.TryGetValue(i, out _))
+                {
+                    continue;
+                }
                 graph.Add(i, Array.Empty<int>());
             }
 
@@ -70,18 +74,28 @@ namespace GraphSearchShortestPathsDataStructures.AssignmentOne
 
         private void DepthFirstSearch(Dictionary<int, int[]> graph, int vertex)
         {
-            Status[vertex] = true;
-            foreach (var nextVertex in graph[vertex])
+            var stack = new Stack<int>();
+            stack.Push(vertex);
+            while (stack.Any())
             {
-                if (Status[nextVertex])
-                    continue;
-
-                DepthFirstSearch(graph, nextVertex);
+                var v = stack.Peek();
+                if (Status[v])
+                {
+                    stack.Pop();
+                    Leads[v] = _lead;
+                    _finishingTime++;
+                    FinishingTimes[v] = _finishingTime;
+                }
+                else
+                {
+                    Status[v] = true;
+                    foreach (var nextVertex in graph[v])
+                    {
+                        if (!Status[nextVertex])
+                            stack.Push(nextVertex);
+                    }
+                }
             }
-
-            Leads[vertex] = _lead;
-            _finishingTime++;
-            FinishingTimes[vertex] = _finishingTime;
         }
 
         public static Dictionary<int, int[]> GetGraph(IEnumerable<int[]> edges)

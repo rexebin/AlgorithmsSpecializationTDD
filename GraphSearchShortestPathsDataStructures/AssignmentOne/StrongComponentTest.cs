@@ -73,10 +73,10 @@ namespace GraphSearchShortestPathsDataStructures.AssignmentOne
         {
             var reversedGraph = StrongComponents.GetReversedGraph(_testGraph);
             _sut.DepthFirstSearch(reversedGraph);
-            Assert.AreEqual(1, _sut.FinishingTimes[3]);
-            Assert.AreEqual(2, _sut.FinishingTimes[5]);
-            Assert.AreEqual(3, _sut.FinishingTimes[2]);
-            Assert.AreEqual(4, _sut.FinishingTimes[8]);
+            Assert.AreEqual(4, _sut.FinishingTimes[3]);
+            Assert.AreEqual(1, _sut.FinishingTimes[5]);
+            Assert.AreEqual(2, _sut.FinishingTimes[2]);
+            Assert.AreEqual(3, _sut.FinishingTimes[8]);
             Assert.AreEqual(5, _sut.FinishingTimes[6]);
             Assert.AreEqual(6, _sut.FinishingTimes[9]);
 
@@ -93,14 +93,14 @@ namespace GraphSearchShortestPathsDataStructures.AssignmentOne
             var graph = StrongComponents.GetGraph(_testGraph);
             var newGraph = _sut.ReplaceVertexWithFinishTime(graph);
             Assert.AreEqual(new[] {8}, newGraph[7]);
-            Assert.AreEqual(new[] {4}, newGraph[3]);
-            Assert.AreEqual(new[] {5}, newGraph[1]);
+            Assert.AreEqual(new[] {5,1}, newGraph[3]);
+            Assert.AreEqual(new[] {2}, newGraph[1]);
             Assert.AreEqual(new[] {9}, newGraph[8]);
             Assert.AreEqual(new[] {3}, newGraph[2]);
             Assert.AreEqual(new[] {6}, newGraph[5]);
             Assert.AreEqual(new[] {7}, newGraph[9]);
-            Assert.AreEqual(new[] {5, 2}, newGraph[4]);
-            Assert.AreEqual(new[] {1, 9}, newGraph[6]);
+            Assert.AreEqual(new[] {5}, newGraph[4]);
+            Assert.AreEqual(new[] {4, 9}, newGraph[6]);
         }
 
 
@@ -118,11 +118,11 @@ namespace GraphSearchShortestPathsDataStructures.AssignmentOne
 
             Assert.AreEqual(6, _sut.Leads[6]);
             Assert.AreEqual(6, _sut.Leads[5]);
-            Assert.AreEqual(6, _sut.Leads[1]);
+            Assert.AreEqual(6, _sut.Leads[4]);
+            Assert.AreEqual(3, _sut.Leads[1]);
+            Assert.AreEqual(3, _sut.Leads[2]);
+            Assert.AreEqual(3, _sut.Leads[3]);
 
-            Assert.AreEqual(4, _sut.Leads[4]);
-            Assert.AreEqual(4, _sut.Leads[2]);
-            Assert.AreEqual(4, _sut.Leads[3]);
 
             var strongComponentsCounts = _sut.GetFiveStrongComponentsCounts();
             Assert.AreEqual(new[] {3, 3, 3}, strongComponentsCounts);
