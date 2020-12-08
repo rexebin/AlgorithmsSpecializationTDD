@@ -36,7 +36,9 @@ namespace GraphSearchShortestPathsDataStructures.AssignmentTwo
             InitializeCandidates();
             while (ProcessedVertices.Count < _graph.Count)
             {
-                AddMinCandidateToProcessedVertices(GetMinCandidate());
+                var minCandidate = GetMinCandidate();
+                AddMinCandidateToProcessedVertices(minCandidate);
+                UpdateCandidates(minCandidate);
             }
         }
 
@@ -62,7 +64,6 @@ namespace GraphSearchShortestPathsDataStructures.AssignmentTwo
             var ((label, length), parent) = minCandidate;
             ProcessedVertices.Add(label,
                 length + ProcessedVertices[parent]);
-            UpdateCandidates(minCandidate);
         }
 
         private void UpdateCandidates(Candidate minCandidate)
