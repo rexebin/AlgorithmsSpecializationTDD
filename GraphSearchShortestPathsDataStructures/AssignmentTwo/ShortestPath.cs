@@ -1,18 +1,26 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Utility.Common;
+using Utility.DataStructures;
 
 namespace GraphSearchShortestPathsDataStructures.AssignmentTwo
 {
-    public record Candidate(Vertex Vertex, int Parent);
-
-    public record Vertex(int Label, int Length);
+    public record Vertex(int Label, int Length) : Record, IComparable<Vertex>
+    {
+        public int CompareTo(Vertex? other)
+        {
+            if (ReferenceEquals(this, other)) return 0;
+            if (ReferenceEquals(null, other)) return 1;
+            return Length.CompareTo(other.Length);
+        }
+    };
 
     public class ShortestPath
     {
         private readonly Dictionary<int, List<Vertex>> _graph;
         public Dictionary<int, int> ProcessedVertices { get; set; } = new();
-        public List<Candidate> Candidates = new();
+        public MinHeap<Vertex> Candidates = new();
 
         public ShortestPath(Dictionary<int, List<Vertex>> graph)
         {
@@ -44,35 +52,31 @@ namespace GraphSearchShortestPathsDataStructures.AssignmentTwo
 
         public void InitializeCandidates()
         {
-            Candidates = ProcessedVertices.SelectMany(vertex => _graph[vertex.Key]
+            Candidates.InsertMany(ProcessedVertices.SelectMany(vertex => _graph[vertex.Key]
+                    .Where(x => !ProcessedVertices.ContainsKey(x.Label))
+                    .Select(x => x with {Length = x.Length + ProcessedVertices[vertex.Key]}))
+                .ToList());
+        }
+
+        public Vertex GetMinCandidate()
+        {
+            var result = Candidates.Pull();
+            if (result == null) throw new Exception("Min Candidate not available.");
+            Candidates.TryDelete(x => x.Label == result.Label);
+            return result;
+        }
+
+        public void AddMinCandidateToProcessedVertices(Vertex minCandidate)
+        {
+            ProcessedVertices.Add(minCandidate.Label, minCandidate.Length);
+        }
+
+        public void UpdateCandidates(Vertex minCandidate)
+        {
+            var (label, _) = minCandidate;
+            Candidates.InsertMany(_graph[label]
                 .Where(x => !ProcessedVertices.ContainsKey(x.Label))
-                .Select(x => new Candidate(x, vertex.Key))).ToList();
-        }
-
-        public Candidate GetMinCandidate()
-        {
-            return Candidates.Aggregate((acc, current) =>
-                acc.Vertex.Length + ProcessedVertices[acc.Parent] >
-                current.Vertex.Length + ProcessedVertices[current.Parent]
-                    ? current
-                    : acc
-            );
-        }
-
-        public void AddMinCandidateToProcessedVertices(Candidate minCandidate)
-        {
-            var ((label, length), parent) = minCandidate;
-            ProcessedVertices.Add(label,
-                length + ProcessedVertices[parent]);
-        }
-
-        private void UpdateCandidates(Candidate minCandidate)
-        {
-            var ((label, _), _) = minCandidate;
-            Candidates = Candidates.Where(x => x.Vertex.Label != label).ToList();
-            Candidates.AddRange(_graph[label]
-                .Where(x => !ProcessedVertices.ContainsKey(x.Label))
-                .Select(v => new Candidate(v, label)));
+                .Select(v => v with{Length = v.Length + ProcessedVertices[label]}));
         }
     }
 }

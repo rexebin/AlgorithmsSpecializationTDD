@@ -11,7 +11,8 @@ namespace Utility.DataStructures
         void Insert(T item);
         T? Pull();
         void InsertMany(IEnumerable<T> records);
-        bool TryDelete(Predicate<T> predicate);
+        bool TryDelete(Func<T, bool> predicate);
+        List<T> ToArray();
     }
 
     public class MinHeap<T> : Heap<T> where T : Record, IComparable<T>
@@ -139,16 +140,19 @@ namespace Utility.DataStructures
             foreach (var testRecord in records) Insert(testRecord);
         }
 
-        public bool TryDelete(Predicate<T> predicate)
+        public bool TryDelete(Func<T, bool> predicate)
         {
-            var itemToDelete = _backingList.Find(predicate);
-            if (itemToDelete == null)
+            var itemToDelete = _backingList.Where(predicate).ToList();
+            if (!itemToDelete.Any())
                 return false;
+            foreach (var item in itemToDelete)
+            {
+                var index = _backingList.IndexOf(item);
+                Swap(index, _backingList.Count - 1);
+                _backingList.RemoveAt(_backingList.Count - 1);
+                BubbleDown(index);
+            }
 
-            var index = _backingList.IndexOf(itemToDelete);
-            Swap(index, _backingList.Count - 1);
-            _backingList.RemoveAt(_backingList.Count - 1);
-            BubbleDown(index);
             return true;
         }
     }

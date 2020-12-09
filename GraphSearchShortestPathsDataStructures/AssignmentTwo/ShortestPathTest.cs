@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
+using Utility.DataStructures;
 
 namespace GraphSearchShortestPathsDataStructures.AssignmentTwo
 {
@@ -11,10 +12,10 @@ namespace GraphSearchShortestPathsDataStructures.AssignmentTwo
             {1, new List<Vertex> {new(2, 1), new(8, 2)}},
             {2, new List<Vertex> {new(1, 1), new(3, 1)}},
             {3, new List<Vertex> {new(2, 1), new(4, 1)}},
-            {4, new List<Vertex> {new(3, 1), new(5, 1)}},
-            {5, new List<Vertex> {new(4, 1), new(6, 2)}},
-            {6, new List<Vertex> {new(5, 1), new(7, 3)}},
-            {7, new List<Vertex> {new(6, 1), new(8, 1)}},
+            {4, new List<Vertex> {new(3, 1), new(5, 2)}},
+            {5, new List<Vertex> {new(4, 2), new(6, 2)}},
+            {6, new List<Vertex> {new(5, 2), new(7, 3)}},
+            {7, new List<Vertex> {new(6, 3), new(8, 1)}},
             {8, new List<Vertex> {new(7, 1), new(1, 2)}}
         };
 
@@ -30,23 +31,29 @@ namespace GraphSearchShortestPathsDataStructures.AssignmentTwo
         {
             var sut = new ShortestPath(_testGraph) {ProcessedVertices = new Dictionary<int, int> {{1, 0}}};
             sut.InitializeCandidates();
-            Assert.AreEqual(new List<Candidate>
+            var candidates = new List<Vertex>
             {
-                new(new(2, 1), 1),
-                new(new(8, 2), 1),
-            }, sut.Candidates);
+                new(2, 1),
+                new(8, 2),
+            };
+            Assert.AreEqual(candidates, sut.Candidates.ToArray());
         }
 
         [Test]
         public void GivenCandidates_ShouldSelectMinVertex()
         {
+            var candidates = new List<Vertex>
+            {
+                new Vertex(2, 1),
+                new Vertex(8, 2)
+            };
             var sut = new ShortestPath(_testGraph)
             {
                 ProcessedVertices = new Dictionary<int, int> {{1, 0}},
-                Candidates = new List<Candidate> {new(new(2, 1), 1), new(new(8, 2), 1),}
+                Candidates = new MinHeap<Vertex>(candidates),
             };
             var minVertex = sut.GetMinCandidate();
-            Assert.AreEqual(new Candidate(new Vertex(2, 1), 1), minVertex);
+            Assert.AreEqual(new Vertex(2, 1), minVertex);
         }
 
         [Test]
@@ -54,45 +61,48 @@ namespace GraphSearchShortestPathsDataStructures.AssignmentTwo
         {
             var sut = new ShortestPath(_testGraph) {ProcessedVertices = new Dictionary<int, int> {{1, 0}, {2, 1}}};
             sut.InitializeCandidates();
-            Assert.AreEqual(new List<Candidate>
+            Assert.AreEqual(new List<Vertex>
             {
-                new(new(8, 2), 1),
-                new(new(3, 1), 2),
-            }, sut.Candidates);
+                new(8, 2),
+                new(3, 2),
+            }, sut.Candidates.ToArray());
         }
 
         [Test]
         public void GivenCandidates_ShouldSelectMinVertex1()
         {
+            var candidates = new List<Vertex> {new(8, 2), new(3, 2)};
             var sut = new ShortestPath(_testGraph)
             {
                 ProcessedVertices = new Dictionary<int, int> {{1, 0}, {2, 1}},
-                Candidates = new List<Candidate> {new(new(8, 2), 1), new(new(3, 1), 2),}
+                Candidates = new MinHeap<Vertex>(candidates)
             };
             var minVertex = sut.GetMinCandidate();
-            Assert.AreEqual(new Candidate(new Vertex(8, 2), 1), minVertex);
+            Assert.AreEqual(new Vertex(8, 2), minVertex);
         }
 
         [Test]
         public void AddMinVertexToProcessedVertex_ShouldUpdateCandidate()
         {
+            var candidates = new List<Vertex> {new(8, 2), new(3, 2)};
             var sut = new ShortestPath(_testGraph)
             {
                 ProcessedVertices = new Dictionary<int, int> {{1, 0}, {2, 1}},
-                Candidates = new List<Candidate> {new(new(8, 2), 1), new(new(3, 1), 2),}
+                Candidates = new MinHeap<Vertex>(candidates)
             };
             var minVertex = sut.GetMinCandidate();
+            Assert.AreEqual(new Vertex(8, 2), minVertex);
             sut.AddMinCandidateToProcessedVertices(minVertex);
             Assert.AreEqual(new Dictionary<int, int>
             {
                 {1, 0}, {2, 1}, {8, 2}
             }, sut.ProcessedVertices);
-            sut.InitializeCandidates();
-            Assert.AreEqual(new List<Candidate>
+            sut.UpdateCandidates(minVertex);
+            Assert.AreEqual(new List<Vertex>
             {
-                new(new(3, 1), 2),
-                new(new(7, 1), 8),
-            }, sut.Candidates);
+                new(3, 2),
+                new(7, 3),
+            }, sut.Candidates.ToArray());
         }
 
 
@@ -103,7 +113,7 @@ namespace GraphSearchShortestPathsDataStructures.AssignmentTwo
             sut.ProcessVertices();
             Assert.AreEqual(new Dictionary<int, int>
             {
-                {1, 0}, {2, 1}, {3, 2}, {4, 3}, {5, 4}, {6, 4}, {7, 3},
+                {1, 0}, {2, 1}, {3, 2}, {4, 3}, {5, 5}, {6, 6}, {7, 3},
                 {
                     8, 2
                 }
