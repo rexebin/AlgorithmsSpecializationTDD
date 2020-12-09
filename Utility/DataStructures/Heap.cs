@@ -4,6 +4,8 @@ using System.Linq;
 
 namespace Utility.DataStructures
 {
+    public abstract record Record;
+
     public interface IHeap<T> where T : Record, IComparable<T>
     {
         void Insert(T item);
@@ -12,22 +14,47 @@ namespace Utility.DataStructures
         bool TryDelete(Predicate<T> predicate);
     }
 
+    public class MinHeap<T> : Heap<T> where T : Record, IComparable<T>
+    {
+        public MinHeap() : base(true)
+        {
+        }
+
+        public MinHeap(IEnumerable<T> seeds) : base(seeds, true)
+        {
+        }
+    }
+
+    public class MaxHeap<T> : Heap<T> where T : Record, IComparable<T>
+    {
+        public MaxHeap() : base(false)
+        {
+        }
+
+        public MaxHeap(IEnumerable<T> seeds) : base(seeds, false)
+        {
+        }
+    }
+
     public class Heap<T> : IHeap<T> where T : Record, IComparable<T>
     {
+        private readonly bool _isMin;
         private readonly List<T> _backingList = new();
+        private int CompareResult => _isMin ? 1 : -1;
+
+        public Heap(bool isMin)
+        {
+            _isMin = isMin;
+        }
+
+        public Heap(IEnumerable<T> seeds, bool isMin) : this(isMin)
+        {
+            InsertMany(seeds);
+        }
 
         public List<T> ToArray()
         {
             return _backingList;
-        }
-
-        public Heap()
-        {
-        }
-
-        public Heap(IEnumerable<T> seeds)
-        {
-            InsertMany(seeds);
         }
 
         public void Insert(T item)
@@ -41,11 +68,12 @@ namespace Utility.DataStructures
             while (true)
             {
                 var parent = GetParentIndex(index);
-                if (_backingList[parent].CompareTo(_backingList[index]) != 1) return;
+                if (_backingList[parent].CompareTo(_backingList[index]) != CompareResult) return;
                 Swap(index, parent);
                 index = parent;
             }
         }
+
 
         private int GetParentIndex(int index)
         {
@@ -62,24 +90,24 @@ namespace Utility.DataStructures
             return top;
         }
 
-        private void BubbleDown(int i)
+        private void BubbleDown(int index)
         {
             while (true)
             {
-                var leftChild = GetLeftChild(i);
-                var rightChild = GetRightChild(i);
-                var smallerChild = GetSmallerChildIndex(leftChild, rightChild);
+                var smallerChild = GetSmallerChildIndex(index);
                 if (smallerChild == null) return;
-                if (_backingList[i].CompareTo(_backingList[smallerChild.Value]) != 1) return;
-                Swap(i, smallerChild.Value);
-                i = smallerChild.Value;
+                if (_backingList[index].CompareTo(_backingList[smallerChild.Value]) != CompareResult) return;
+                Swap(index, smallerChild.Value);
+                index = smallerChild.Value;
             }
         }
 
-        private int? GetSmallerChildIndex(int? leftChild, int? rightChild)
+        private int? GetSmallerChildIndex(int parent)
         {
+            var leftChild = GetLeftChild(parent);
+            var rightChild = GetRightChild(parent);
             return leftChild != null && rightChild != null
-                ? _backingList[leftChild.Value].CompareTo(_backingList[rightChild.Value]) == -1
+                ? _backingList[rightChild.Value].CompareTo(_backingList[leftChild.Value]) == CompareResult
                     ? leftChild
                     : rightChild
                 : leftChild;
