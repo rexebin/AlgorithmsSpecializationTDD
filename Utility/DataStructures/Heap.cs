@@ -36,18 +36,18 @@ namespace Utility.DataStructures
         }
     }
 
-    public class Heap<T> : IHeap<T> where T : Record, IComparable<T>
+    public abstract class Heap<T> : IHeap<T> where T : Record, IComparable<T>
     {
         private readonly bool _isMin;
         private readonly List<T> _backingList = new();
         private int CompareResult => _isMin ? 1 : -1;
 
-        public Heap(bool isMin)
+        protected Heap(bool isMin)
         {
             _isMin = isMin;
         }
 
-        public Heap(IEnumerable<T> seeds, bool isMin) : this(isMin)
+        protected Heap(IEnumerable<T> seeds, bool isMin) : this(isMin)
         {
             InsertMany(seeds);
         }
