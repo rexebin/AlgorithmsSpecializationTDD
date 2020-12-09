@@ -1,63 +1,33 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using Utility.Common;
 
 namespace GraphSearchShortestPathsDataStructures.AssignmentOne
 {
     public class StrongComponents
     {
-        private Dictionary<int, bool> Status { get; set; } = new();
-        public Dictionary<int, int> Leads { get; private set; } = new();
-        public Dictionary<int, int> FinishingTimes { get; private set; } = new();
+        private Dictionary<int, bool> IsDiscovered { get; set; } = new();
+        private Dictionary<int, bool> IsInStack { get; set; } = new();
+        public Dictionary<int, int> LeadTracker { get; private set; } = new();
+        public Dictionary<int, int> FinishingTimeTracker { get; private set; } = new();
         private int _finishingTime;
         private int _lead;
 
-        public static int[][] ReadFile()
+        public int[] GetStrongComponents(Dictionary<int, int[]> graph, Dictionary<int, int[]> reversedGraph)
         {
-            return new FileReader()
-                .ReadFile("AssignmentOne", "SCC.txt")
-                .Select(x => x.TrimEnd().Split(' ')
-                    .Select(int.Parse)
-                    .ToArray()).ToArray();
-        }
-
-        public int[] GetStrongComponents(int[][] fileInput)
-        {
-            var reversedGraph = GetReversedGraph(fileInput);
-            reversedGraph = AddMissingVertices(reversedGraph);
-            DepthFirstSearch(reversedGraph);
-            var graph = GetGraph(fileInput);
-            graph = AddMissingVertices(graph);
-            graph = ReplaceVertexWithFinishTime(graph);
-            DepthFirstSearch(graph);
+            SearchGraph(reversedGraph);
+            var updatedGraph = ReplaceVertexWithFinishTime(graph);
+            SearchGraph(updatedGraph);
             return GetFiveStrongComponentsCounts();
         }
 
-        private static Dictionary<int, int[]> AddMissingVertices(Dictionary<int, int[]> graph)
-        {
-            for (var i = 1; i <= 875714; i++)
-            {
-                if (graph.TryGetValue(i, out _))
-                {
-                    continue;
-                }
-                graph.Add(i, Array.Empty<int>());
-            }
-
-            return graph;
-        }
-
-        public void DepthFirstSearch(Dictionary<int, int[]> graph)
+        public void SearchGraph(Dictionary<int, int[]> graph)
         {
             ResetTrackers(graph);
             for (var i = graph.Count; i >= 1; i--)
             {
-                if (Status[i])
+                if (IsDiscovered[i])
                     continue;
 
-                _lead = i;
                 DepthFirstSearch(graph, i);
             }
         }
@@ -67,67 +37,59 @@ namespace GraphSearchShortestPathsDataStructures.AssignmentOne
             _finishingTime = 0;
             _lead = 0;
 
-            Status = graph.ToDictionary(e => e.Key, e => false);
-            Leads = new Dictionary<int, int>();
-            FinishingTimes = new Dictionary<int, int>();
+            IsDiscovered = graph.ToDictionary(e => e.Key, e => false);
+            IsInStack = graph.ToDictionary(e => e.Key, e => false);
+            LeadTracker = new Dictionary<int, int>();
+            FinishingTimeTracker = new Dictionary<int, int>();
         }
 
-        private void DepthFirstSearch(Dictionary<int, int[]> graph, int vertex)
+        private void DepthFirstSearch(Dictionary<int, int[]> graph, int lead)
         {
+            _lead = lead;
             var stack = new Stack<int>();
-            stack.Push(vertex);
+            AddVertexToStack(lead, stack);
             while (stack.Any())
             {
-                var v = stack.Peek();
-                if (Status[v])
+                var top = stack.Peek();
+                if (!IsDiscovered[top])
                 {
-                    stack.Pop();
-                    Leads[v] = _lead;
-                    _finishingTime++;
-                    FinishingTimes[v] = _finishingTime;
-                }
-                else
-                {
-                    Status[v] = true;
-                    foreach (var nextVertex in graph[v])
+                    IsDiscovered[top] = true;
+                    foreach (var adjacentVertex in graph[top])
                     {
-                        if (!Status[nextVertex])
-                            stack.Push(nextVertex);
+                        if (IsDiscovered[adjacentVertex] || IsInStack[adjacentVertex]) continue;
+                        AddVertexToStack(adjacentVertex, stack);
                     }
+
+                    continue;
                 }
+
+                stack.Pop();
+                UpdateTrackers(top);
             }
         }
 
-        public static Dictionary<int, int[]> GetGraph(IEnumerable<int[]> edges)
+        private void AddVertexToStack(int vertex, Stack<int> stack)
         {
-            return edges.GroupBy(x => x.First())
-                .ToDictionary(e => e.Key,
-                    e => e.Select(x => x.Last()).ToArray());
+            stack.Push(vertex);
+            IsInStack[vertex] = true;
         }
 
-        public static Dictionary<int, int[]> GetReversedGraph(IEnumerable<int[]> edges)
+        private void UpdateTrackers(int top)
         {
-            return edges.GroupBy(x => x.Last())
-                .ToDictionary(e => e.Key,
-                    e => e.Select(x => x.First()).ToArray());
+            LeadTracker.Add(top, _lead);
+            _finishingTime++;
+            FinishingTimeTracker.Add(top, _finishingTime);
         }
 
         public Dictionary<int, int[]> ReplaceVertexWithFinishTime(Dictionary<int, int[]> graph)
         {
-            var result = new Dictionary<int, int[]>();
-            foreach (var (key, _) in graph)
-            {
-                if (!FinishingTimes.TryGetValue(key, out var finishingTime) || finishingTime == 0) continue;
-                if (!graph.TryGetValue(key, out var originalValue)) continue;
-                result.Add(finishingTime, originalValue.Select(x => FinishingTimes[x]).ToArray());
-            }
-
-            return result;
+            return graph.ToDictionary(e => FinishingTimeTracker[e.Key],
+                e => e.Value.Select(x => FinishingTimeTracker[x]).ToArray());
         }
 
-        public int[] GetFiveStrongComponentsCounts()
+        private int[] GetFiveStrongComponentsCounts()
         {
-            return Leads.GroupBy(x => x.Value).Select(x => x.Count())
+            return LeadTracker.GroupBy(x => x.Value).Select(x => x.Count())
                 .OrderByDescending(x => x).Take(5).ToArray();
         }
     }
