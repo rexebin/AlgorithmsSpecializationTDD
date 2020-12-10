@@ -6,7 +6,7 @@ using Utility.DataStructures;
 
 namespace GraphSearchShortestPathsDataStructures.AssignmentTwo
 {
-    public record Vertex(int Label, int Length) : Record, IComparable<Vertex>
+    public record Vertex(int Label, int Length) : IComparable<Vertex>
     {
         public int CompareTo(Vertex? other)
         {

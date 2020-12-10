@@ -4,18 +4,18 @@ using System.Linq;
 
 namespace Utility.DataStructures
 {
-    public abstract record Record;
-
-    public interface IHeap<T> where T : Record, IComparable<T>
+    public interface IHeap<T> where T : IComparable<T>
     {
         void Insert(T item);
         T? Pull();
         void InsertMany(IEnumerable<T> records);
         bool TryDelete(Func<T, bool> predicate);
         List<T> ToArray();
+
+        public long Count { get; }
     }
 
-    public class MinHeap<T> : Heap<T> where T : Record, IComparable<T>
+    public class MinHeap<T> : Heap<T> where T : IComparable<T>
     {
         public MinHeap() : base(true)
         {
@@ -26,7 +26,7 @@ namespace Utility.DataStructures
         }
     }
 
-    public class MaxHeap<T> : Heap<T> where T : Record, IComparable<T>
+    public class MaxHeap<T> : Heap<T> where T : IComparable<T>
     {
         public MaxHeap() : base(false)
         {
@@ -37,11 +37,12 @@ namespace Utility.DataStructures
         }
     }
 
-    public abstract class Heap<T> : IHeap<T> where T : Record, IComparable<T>
+    public abstract class Heap<T> : IHeap<T> where T : IComparable<T>
     {
         private readonly bool _isMin;
         private readonly List<T> _backingList = new();
         private int CompareResult => _isMin ? 1 : -1;
+        public long Count => _backingList.Count;
 
         protected Heap(bool isMin)
         {
@@ -60,7 +61,7 @@ namespace Utility.DataStructures
 
         public void Insert(T item)
         {
-            _backingList.Add(item with {});
+            _backingList.Add(item);
             BubbleUp(_backingList.Count - 1);
         }
 
@@ -83,12 +84,18 @@ namespace Utility.DataStructures
 
         public T? Pull()
         {
-            if (!_backingList.Any()) return null;
+            if (!_backingList.Any()) return default;
             var top = _backingList[0];
             Swap(0, _backingList.Count - 1);
             _backingList.RemoveAt(_backingList.Count - 1);
             BubbleDown(0);
             return top;
+        }
+
+        public T? Peek()
+        {
+            if (!_backingList.Any()) return default;
+            return _backingList[0];
         }
 
         private void BubbleDown(int index)
