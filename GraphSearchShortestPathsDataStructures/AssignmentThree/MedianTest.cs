@@ -43,7 +43,8 @@ namespace GraphSearchShortestPathsDataStructures.AssignmentThree
         {
             var input = new FileReader()
                 .ReadFile("AssignmentThree", "Median.txt")
-                .Select(int.Parse);
+                .Select(int.Parse).ToArray();
+            Assert.AreEqual(10000, input.Length);
             var sut = new Median();
             var result = input.Sum(x => sut.GetMedian(x)) % 10000;
             Assert.AreEqual(1213, result);
