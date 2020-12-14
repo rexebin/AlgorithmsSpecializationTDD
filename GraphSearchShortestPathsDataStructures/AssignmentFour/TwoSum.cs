@@ -1,48 +1,48 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 
 namespace GraphSearchShortestPathsDataStructures.AssignmentFour
 {
     public class TwoSum
     {
-        public readonly Dictionary<long, long[]> Input;
-        public readonly HashSet<long> HasTwoSum = new();
+        public ImmutableSortedSet<long> UniqueNumbers { get; }
+        public HashSet<long> Duplications { get; }
 
         public TwoSum(long[] input)
         {
-            Input = input.GroupBy(x => Math.Abs(x) / 10000)
-                .Where(x => x.Count() >= 2)
-                .ToDictionary(x => x.Key,
-                    e => e.ToArray());
+            UniqueNumbers = input.ToImmutableSortedSet();
+            Duplications = input.GroupBy(e => e)
+                .Where(e => e.Count() >= 2)
+                .SelectMany(e => e)
+                .ToHashSet();
         }
 
-        public void GetCount(long[] input)
+        public int GetCount()
         {
-            for (var index = 0; index < input.Length; index++)
+            var numbersWithTwoSums = new HashSet<long>();
+            foreach (var n in UniqueNumbers)
             {
-                var v = input[index];
-                for (var i = 0; i < input.Length; i++)
+                var lowerBoundIndex = GetClosestIndex(-10000 - n);
+                var highBoundIndex = GetClosestIndex(10000 - n);
+                for (var i = lowerBoundIndex; i < highBoundIndex; i++)
                 {
-                    if (index == i) continue;
-                    var v1 = input[i];
-                    var sum = v + v1;
-                    if (sum >= -10000 && sum <= 10000)
-                    {
-                        HasTwoSum.Add(sum);
-                    }
+                    if (UniqueNumbers[i] != n) numbersWithTwoSums.Add(UniqueNumbers[i] + n);
                 }
             }
-        }
 
-        public int GetAllCount()
-        {
-            foreach (var i in Input)
+            foreach (var n in Duplications.Where(n => n * 2 >= -10000 && n * 2 <= 10000))
             {
-                GetCount(i.Value);
+                numbersWithTwoSums.Add(n * 2);
             }
 
-            return HasTwoSum.Count;
+            return numbersWithTwoSums.Count;
+        }
+
+        private int GetClosestIndex(long value)
+        {
+            var index = UniqueNumbers.IndexOf(value);
+            return index > 0 ? index : UniqueNumbers.Add(value).IndexOf(value);
         }
     }
 }

@@ -1,15 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Net.Sockets;
 using NUnit.Framework;
-using NUnit.Framework.Interfaces;
 using Utility.Common;
 
 namespace GraphSearchShortestPathsDataStructures.AssignmentFour
 {
     public class TwoSumTest
     {
-        private readonly long[] _input = new[]
+        private readonly long[] _input =
         {
             68037543430,
             68037543431,
@@ -17,48 +15,47 @@ namespace GraphSearchShortestPathsDataStructures.AssignmentFour
             0,
             -10000,
             15493,
+            8000,
             5000,
             5000
         };
-        
-        private Dictionary<long, long[]> _dictionary = new Dictionary<long, long[]>
-        {
-            {6803754, new[] {68037543430, 68037543431, -68037543123}},
-            {0, new[] {0L, 5000L, 5000L}},
-            {1, new[] {-10000L, 15493L}},
-        };
-        
+
         [Test]
-        public void GivenTestArray_ShouldBucketThemIntoTenThousands()
+        public void GivenInputShouldGenerateSortedDictionary()
         {
             var sut = new TwoSum(_input);
-            Assert.AreEqual(_dictionary, sut.Input);
-        }
-        
-        [Test]
-        public void GivenGroupedDict_ShouldCountTwoSumBetween_Negative10000_10000()
-        {
-            var sut = new TwoSum(_input);
-            sut.GetAllCount();
-        
-            Assert.AreEqual(new HashSet<int> {307, 308, 5000, 10000, 5493},
-                sut.HasTwoSum);
-        }
-        
-        [Test]
-        public void GivenTestInput_ShouldReturnCount5()
-        {
-            var sut = new TwoSum(_input);
-            Assert.AreEqual(5, sut.GetAllCount());
+            Assert.AreEqual(new SortedSet<long>
+            {
+                -68037543123,
+                -10000,
+                0,
+                5000,
+                8000,
+                15493,
+                68037543430,
+                68037543431,
+            }, sut.UniqueNumbers);
+            Assert.AreEqual(new HashSet<long>{5000}, sut.Duplications);
+            
         }
 
         [Test]
-        public void GivenTestArray_ShouldCountTwoSumCounts()
+        public void GivenTestInput_ShouldReturnTwoSumCount()
         {
-            var input = new FileReader().ReadFile("AssignmentFour", "2sum.txt")
+            var sut = new TwoSum(_input);
+            var result = sut.GetCount();
+            Assert.AreEqual(9, result); //307, 308, 5000, -10000, 5493, -5000, 8000, -2000, 10000
+        }
+
+        [Test]
+        public void GivenAssignmentArray_GetResult()
+        {
+            var input = new FileReader()
+                .ReadFile("AssignmentFour", "2sum.txt")
                 .Select(long.Parse);
             var sut = new TwoSum(input.ToArray());
-            Assert.AreEqual(414, sut.GetAllCount());
+            var result = sut.GetCount();
+            Assert.AreEqual(427, result);
         }
     }
 }
