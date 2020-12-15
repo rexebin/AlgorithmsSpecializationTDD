@@ -122,7 +122,7 @@ namespace Utility.DataStructures
         {
             var records = new List<TestRecord>
             {
-                new(1, 5), new(2, 3), new(3, 4)
+                new(1, 5), new(2, 3), new(3, 4), new (3, 5),new (3, -5)
             };
             var heap = new MinHeap<TestRecord>();
             heap.InsertMany(records);

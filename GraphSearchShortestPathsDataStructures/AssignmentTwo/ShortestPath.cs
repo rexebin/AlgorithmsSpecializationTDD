@@ -3,19 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using Utility.Common;
 using Utility.DataStructures;
+using Utility.GraphModels;
 
 namespace GraphSearchShortestPathsDataStructures.AssignmentTwo
 {
-    public record Vertex(int Label, int Length) : IComparable<Vertex>
-    {
-        public int CompareTo(Vertex? other)
-        {
-            if (ReferenceEquals(this, other)) return 0;
-            if (ReferenceEquals(null, other)) return 1;
-            return Length.CompareTo(other.Length);
-        }
-    };
-
     public class ShortestPath
     {
         private readonly Dictionary<int, List<Vertex>> _graph;

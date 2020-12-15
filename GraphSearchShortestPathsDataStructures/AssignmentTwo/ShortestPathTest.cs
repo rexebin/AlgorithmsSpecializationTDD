@@ -2,6 +2,7 @@
 using System.Linq;
 using NUnit.Framework;
 using Utility.DataStructures;
+using Utility.GraphModels;
 
 namespace GraphSearchShortestPathsDataStructures.AssignmentTwo
 {
