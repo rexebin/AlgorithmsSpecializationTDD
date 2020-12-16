@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace GreedyAlgorithmsMinimumSpanningTreesAndDynamicProgramming.AssignmentOne
+namespace GreedyAlgorithmsMinimumSpanningTreesAndDynamicProgramming.WeekOneJobSchedulerAndPrimsMST
 {
     public class Scheduler
     {

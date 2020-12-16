@@ -4,7 +4,7 @@ using System.Linq;
 using NUnit.Framework;
 using Utility.Common;
 
-namespace GreedyAlgorithmsMinimumSpanningTreesAndDynamicProgramming.AssignmentOne
+namespace GreedyAlgorithmsMinimumSpanningTreesAndDynamicProgramming.WeekOneJobSchedulerAndPrimsMST
 {
     public class SchedulerTest
     {

@@ -5,7 +5,7 @@ using Utility.Common;
 using Utility.DataStructures;
 using Utility.GraphModels;
 
-namespace GreedyAlgorithmsMinimumSpanningTreesAndDynamicProgramming.AssignmentOne
+namespace GreedyAlgorithmsMinimumSpanningTreesAndDynamicProgramming.WeekOneJobSchedulerAndPrimsMST
 {
     public class PrimMSTTest
     {
