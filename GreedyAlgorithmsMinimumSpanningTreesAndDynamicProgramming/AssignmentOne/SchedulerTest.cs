@@ -23,10 +23,10 @@ namespace GreedyAlgorithmsMinimumSpanningTreesAndDynamicProgramming.AssignmentOn
             var sorted = sut.SortByWeightMinusLength(_jobs);
             Assert.AreEqual(new List<List<double>>
             {
-                new() {31, 73, -42, 73},
-                new() {8, 50, -42, 73+50},
-                new() {45, 79, -34, 73+50+79},
-                new() {74, 59, 15, 73+50+79+59}
+                new() {74, 59, 15, 59},
+                new() {45, 79, -34, 59+79},
+                new() {31, 73, -42, 73+59+79},
+                new() {8, 50, -42, 73+50+59+79},
             }, sorted);
         }
 
@@ -35,7 +35,7 @@ namespace GreedyAlgorithmsMinimumSpanningTreesAndDynamicProgramming.AssignmentOn
         {
             var sut = new Scheduler();
             var weightedCompletionTime = sut.GetWeightedCompletionTime(sut.SortByWeightMinusLength(_jobs));
-            Assert.AreEqual(31651, weightedCompletionTime);
+            Assert.AreEqual(19205, weightedCompletionTime);
         }
 
         [Test]
@@ -46,7 +46,7 @@ namespace GreedyAlgorithmsMinimumSpanningTreesAndDynamicProgramming.AssignmentOn
                 .Select(x => x.Split(" ").Select(double.Parse).ToArray()).Skip(1).ToArray();
             var weightedCompletionTime = sut.GetWeightedCompletionTime(sut.SortByWeightMinusLength(jobs));
 
-            Assert.AreEqual(188635738448, weightedCompletionTime);
+            Assert.AreEqual(69119377652, weightedCompletionTime);
         }
 
         [Test]

@@ -17,33 +17,6 @@ namespace GreedyAlgorithmsMinimumSpanningTreesAndDynamicProgramming.AssignmentOn
             Graph = graph;
         }
 
-        public static Dictionary<int, HashSet<Vertex>> GetGraph(List<List<int>> inputGraph)
-        {
-            var groupByFirstVertex = inputGraph.GroupBy(x => x.First())
-                .ToDictionary(
-                    e => e.Key,
-                    e => e.Select(x =>
-                            new Vertex(x[1], x.Last()))
-                        .ToHashSet());
-
-            var groupBySecondVertex = inputGraph.GroupBy(x => x[1])
-                .ToDictionary(
-                    e => e.Key,
-                    e => e.Select(x =>
-                            new Vertex(x[0], x.Last()))
-                        .ToHashSet());
-            foreach (var v in groupBySecondVertex)
-            {
-                if (groupByFirstVertex.TryAdd(v.Key, v.Value)) continue;
-                foreach (var x in v.Value)
-                {
-                    groupByFirstVertex[v.Key].Add(x);
-                }
-            }
-
-            return groupByFirstVertex;
-        }
-
         public void ProcessVertices()
         {
             ProcessedVertices = new Dictionary<int, int> {{1, 0}};
@@ -76,20 +49,46 @@ namespace GreedyAlgorithmsMinimumSpanningTreesAndDynamicProgramming.AssignmentOn
 
         private void UpdateCandidate(Vertex minCandidate)
         {
-            var adjacent = Graph[minCandidate.Label].Where(x => !ProcessedVertices.ContainsKey(x.Label));
-            Candidates.TryDelete(x => adjacent.Any(v => v.Label == x.Label));
-            foreach (var vertex in adjacent)
+            var adjacentVertices = Graph[minCandidate.Label].Where(x => !ProcessedVertices.ContainsKey(x.Label));
+            Candidates.TryDelete(x => adjacentVertices.Any(v => v.Label == x.Label));
+            foreach (var (label, _) in adjacentVertices)
             {
-                var edgesCrossing = Graph[vertex.Label]
+                var crossingVertices = Graph[label]
                     .Where(x => ProcessedVertices.ContainsKey(x.Label));
-                var item = new Vertex(vertex.Label, edgesCrossing.Min(x => x.Length));
-                Candidates.Insert(item);
+                Candidates.Insert(new Vertex(label, crossingVertices.Min(x => x.Length)));
             }
         }
-        
+
         public int GetMST()
         {
             return ProcessedVertices.Sum(x => x.Value);
+        }
+
+        public static Dictionary<int, HashSet<Vertex>> GetGraph(List<List<int>> inputGraph)
+        {
+            var groupByFirstVertex = inputGraph.GroupBy(x => x.First())
+                .ToDictionary(
+                    e => e.Key,
+                    e => e.Select(x =>
+                            new Vertex(x[1], x.Last()))
+                        .ToHashSet());
+
+            var groupBySecondVertex = inputGraph.GroupBy(x => x[1])
+                .ToDictionary(
+                    e => e.Key,
+                    e => e.Select(x =>
+                            new Vertex(x[0], x.Last()))
+                        .ToHashSet());
+            foreach (var v in groupBySecondVertex)
+            {
+                if (groupByFirstVertex.TryAdd(v.Key, v.Value)) continue;
+                foreach (var x in v.Value)
+                {
+                    groupByFirstVertex[v.Key].Add(x);
+                }
+            }
+
+            return groupByFirstVertex;
         }
     }
 }

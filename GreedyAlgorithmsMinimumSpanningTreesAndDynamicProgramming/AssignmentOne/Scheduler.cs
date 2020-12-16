@@ -16,7 +16,7 @@ namespace GreedyAlgorithmsMinimumSpanningTreesAndDynamicProgramming.AssignmentOn
                 .Select(x =>
                     x.Append(x[0] - x[1])
                         .ToList())
-                .OrderBy(x => x[2])
+                .OrderByDescending(x => x[2])
                 .ThenByDescending(x => x[0])
                 .ToList();
         }

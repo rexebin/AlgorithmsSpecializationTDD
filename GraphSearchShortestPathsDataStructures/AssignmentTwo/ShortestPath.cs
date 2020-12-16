@@ -32,7 +32,7 @@ namespace GraphSearchShortestPathsDataStructures.AssignmentTwo
         public void ProcessVertices()
         {
             ProcessedVertices = new Dictionary<int, int> {{1, 0}};
-            InitializeCandidates();
+            InitializeCandidates(new(1,0));
             while (ProcessedVertices.Count < _graph.Count)
             {
                 var minCandidate = GetMinCandidate();
@@ -41,12 +41,9 @@ namespace GraphSearchShortestPathsDataStructures.AssignmentTwo
             }
         }
 
-        public void InitializeCandidates()
+        public void InitializeCandidates(Vertex initVertex)
         {
-            Candidates.InsertMany(ProcessedVertices.SelectMany(vertex => _graph[vertex.Key]
-                    .Where(x => !ProcessedVertices.ContainsKey(x.Label))
-                    .Select(x => x with {Length = x.Length + ProcessedVertices[vertex.Key]}))
-                .ToList());
+            Candidates.InsertMany(_graph[initVertex.Label].Select(x => x with {Length = x.Length}));
         }
 
         public Vertex GetMinCandidate()

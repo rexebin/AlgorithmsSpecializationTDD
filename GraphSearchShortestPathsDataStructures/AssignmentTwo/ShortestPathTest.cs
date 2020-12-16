@@ -31,7 +31,7 @@ namespace GraphSearchShortestPathsDataStructures.AssignmentTwo
         public void GivenFirstProcessedVertices_ShouldReturnVerticesToProcess()
         {
             var sut = new ShortestPath(_testGraph) {ProcessedVertices = new Dictionary<int, int> {{1, 0}}};
-            sut.InitializeCandidates();
+            sut.InitializeCandidates(new(1,0));
             var candidates = new List<Vertex>
             {
                 new(2, 1),
@@ -55,18 +55,6 @@ namespace GraphSearchShortestPathsDataStructures.AssignmentTwo
             };
             var minVertex = sut.GetMinCandidate();
             Assert.AreEqual(new Vertex(2, 1), minVertex);
-        }
-
-        [Test]
-        public void GivenProcessedVertices_ShouldReturnVerticesToProcess()
-        {
-            var sut = new ShortestPath(_testGraph) {ProcessedVertices = new Dictionary<int, int> {{1, 0}, {2, 1}}};
-            sut.InitializeCandidates();
-            Assert.AreEqual(new List<Vertex>
-            {
-                new(8, 2),
-                new(3, 2),
-            }, sut.Candidates.ToArray());
         }
 
         [Test]
