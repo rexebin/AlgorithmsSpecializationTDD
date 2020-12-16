@@ -42,7 +42,7 @@ namespace GreedyAlgorithmsMinimumSpanningTreesAndDynamicProgramming.WeekOneJobSc
         public void GivenAssignmentJobs_ShouldReturnWeightedCompletedTime()
         {
             var sut = new Scheduler();
-            var jobs = new FileReader().ReadFile("AssignmentOne", "jobs.txt")
+            var jobs = new FileReader().ReadFile("WeekOneJobSchedulerAndPrimsMST", "jobs.txt")
                 .Select(x => x.Split(" ").Select(double.Parse).ToArray()).Skip(1).ToArray();
             var weightedCompletionTime = sut.GetWeightedCompletionTime(sut.SortByWeightMinusLength(jobs));
 
@@ -67,7 +67,7 @@ namespace GreedyAlgorithmsMinimumSpanningTreesAndDynamicProgramming.WeekOneJobSc
         public void GivenAssignmentJobs_ShouldReturnCount()
         {
             var sut = new Scheduler();
-            var jobs = new FileReader().ReadFile("AssignmentOne", "jobs.txt")
+            var jobs = new FileReader().ReadFile("WeekOneJobSchedulerAndPrimsMST", "jobs.txt")
                 .Select(x => x.Split(" ").Select(double.Parse).ToArray()).Skip(1).ToArray();
             var weightedCompletionTime = sut.GetWeightedCompletionTime(sut.SortByWeightLengthRatio(jobs));
 

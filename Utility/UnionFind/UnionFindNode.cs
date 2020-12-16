@@ -8,31 +8,39 @@ namespace Utility.UnionFind
         public int Rank { get; private set; }
         public UnionFindNode<T> Parent { get; private set; }
 
+
+        public List<T> Children { get; private set; }
+
         public UnionFindNode(T value)
         {
             Value = value;
             Rank = 0;
             Parent = this;
+            Children = new List<T>{value};
         }
 
         public void Union(UnionFindNode<T> node)
         {
             var rootOfGivenNode = GetRootNode(node);
             var root = GetRootNode(this);
+            if (rootOfGivenNode == root) return;
             if (root.Rank == rootOfGivenNode.Rank)
             {
                 rootOfGivenNode.Parent = root;
                 root.IncrementRank();
+                root.Children.AddRange(rootOfGivenNode.Children);
                 return;
             }
 
             if (root.Rank > rootOfGivenNode.Rank)
             {
                 rootOfGivenNode.Parent = root;
+                root.Children.AddRange(rootOfGivenNode.Children);
                 return;
             }
 
             root.Parent = rootOfGivenNode;
+            rootOfGivenNode.Children.AddRange(root.Children);
         }
 
         private void IncrementRank()

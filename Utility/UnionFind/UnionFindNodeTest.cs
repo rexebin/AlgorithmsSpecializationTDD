@@ -13,6 +13,7 @@ namespace Utility.UnionFind
             Assert.AreEqual(item, node.Value);
             Assert.AreEqual(node, node.Parent);
             Assert.AreEqual(0, node.Rank);
+            Assert.AreEqual(1, node.Children.Count);
         }
 
         [Test]
@@ -25,6 +26,8 @@ namespace Utility.UnionFind
             Assert.AreEqual(node1, node1.Parent);
             Assert.AreEqual(1, node1.Rank);
             Assert.AreEqual(0, node2.Rank);
+            Assert.AreEqual(2, node1.Children.Count);
+            Assert.AreEqual(1, node2.Children.Count);
         }
 
 
@@ -42,6 +45,9 @@ namespace Utility.UnionFind
             Assert.AreEqual(1, node1.Rank);
             Assert.AreEqual(0, node2.Rank);
             Assert.AreEqual(0, node3.Rank);
+            Assert.AreEqual(3, node1.Children.Count);
+            Assert.AreEqual(1, node2.Children.Count);
+            Assert.AreEqual(1, node3.Children.Count);
         }
 
         [Test]
@@ -58,6 +64,9 @@ namespace Utility.UnionFind
             Assert.AreEqual(1, node1.Rank);
             Assert.AreEqual(0, node2.Rank);
             Assert.AreEqual(0, node3.Rank);
+            Assert.AreEqual(3, node1.Children.Count);
+            Assert.AreEqual(1, node2.Children.Count);
+            Assert.AreEqual(1, node3.Children.Count);
         }
 
         [Test]
@@ -74,6 +83,9 @@ namespace Utility.UnionFind
             Assert.AreEqual(1, node1.Rank);
             Assert.AreEqual(0, node2.Rank);
             Assert.AreEqual(0, node3.Rank);
+            Assert.AreEqual(3, node1.Children.Count);
+            Assert.AreEqual(1, node2.Children.Count);
+            Assert.AreEqual(1, node3.Children.Count);
         }
 
         [Test]
@@ -95,6 +107,10 @@ namespace Utility.UnionFind
             Assert.AreEqual(0, node2.Rank);
             Assert.AreEqual(1, node3.Rank);
             Assert.AreEqual(0, node4.Rank);
+            Assert.AreEqual(4, node1.Children.Count);
+            Assert.AreEqual(1, node2.Children.Count);
+            Assert.AreEqual(2, node3.Children.Count);
+            Assert.AreEqual(1, node4.Children.Count);
         }
 
         [Test]
@@ -108,6 +124,10 @@ namespace Utility.UnionFind
             node3.Union(node4);
             node1.Union(node3);
             Assert.AreEqual(node1, node4.Find());
+            Assert.AreEqual(4, node1.Children.Count);
+            Assert.AreEqual(1, node2.Children.Count);
+            Assert.AreEqual(2, node3.Children.Count);
+            Assert.AreEqual(1, node4.Children.Count);
         }
 
         [Test]
@@ -123,6 +143,10 @@ namespace Utility.UnionFind
             Assert.AreEqual(node1, node4.Find());
             Assert.AreEqual(node1, node4.Parent);
             Assert.AreEqual(node1, node3.Parent);
+            Assert.AreEqual(4, node1.Children.Count);
+            Assert.AreEqual(1, node2.Children.Count);
+            Assert.AreEqual(2, node3.Children.Count);
+            Assert.AreEqual(1, node4.Children.Count);
         }
 
         [Test]
@@ -142,10 +166,74 @@ namespace Utility.UnionFind
             Assert.AreEqual(node1, node3.Parent);
             Assert.AreEqual(node1, node4.Parent);
             Assert.AreEqual(node1, node5.Parent);
+            Assert.AreEqual(5, node1.Children.Count);
+            Assert.AreEqual(1, node2.Children.Count);
+            Assert.AreEqual(2, node3.Children.Count);
+            Assert.AreEqual(1, node4.Children.Count);
+            Assert.AreEqual(1, node5.Children.Count);
         }
 
         [Test]
-        public void IsUnion_ShouldReturnTrueGivenNodeIsInSameUnion()
+        public void UnionTwoGroupOfNode_ShouldKeepCorrectChildrenCountOnRoot()
+        {
+            var node1 = new UnionFindNode<int>(1);
+            var node2 = new UnionFindNode<int>(2);
+            node1.Union(node2);
+            var node3 = new UnionFindNode<int>(1);
+            var node4 = new UnionFindNode<int>(2);
+            node3.Union(node4);
+            node1.Union(node3);
+            var node5 = new UnionFindNode<int>(1);
+            node5.Union(node4);
+
+            Assert.AreEqual(5, node1.Children.Count);
+            Assert.AreEqual(1, node2.Children.Count);
+            Assert.AreEqual(2, node3.Children.Count);
+            Assert.AreEqual(1, node4.Children.Count);
+            Assert.AreEqual(1, node5.Children.Count);
+            var node6 = new UnionFindNode<int>(1);
+            var node7 = new UnionFindNode<int>(1);
+            var node8 = new UnionFindNode<int>(1);
+            node6.Union(node7);
+            node6.Union(node8);
+            node5.Union(node8);
+            Assert.AreEqual(node1, node1.Parent);
+            Assert.AreEqual(node1, node2.Parent);
+            Assert.AreEqual(node1, node3.Parent);
+            Assert.AreEqual(node1, node4.Parent);
+            Assert.AreEqual(node1, node5.Parent);
+            Assert.AreEqual(node1, node6.Parent);
+            Assert.AreEqual(node6, node7.Parent);
+            Assert.AreEqual(node6, node8.Parent);
+
+            Assert.AreEqual(8, node1.Children.Count);
+        }
+
+
+        [Test]
+        public void UnionAlreadyUnionedNodes_ShouldNotUnionAgain()
+        {
+            var node1 = new UnionFindNode<int>(1);
+            var node2 = new UnionFindNode<int>(2);
+            node1.Union(node2);
+            var node3 = new UnionFindNode<int>(1);
+            var node4 = new UnionFindNode<int>(2);
+            node3.Union(node4);
+            node1.Union(node3);
+            node2.Union(node4);
+            Assert.AreEqual(node1, node1.Parent);
+            Assert.AreEqual(2, node1.Rank);
+            Assert.AreEqual(node1, node2.Parent);
+            Assert.AreEqual(node1, node3.Parent);
+            Assert.AreEqual(node1, node4.Parent);
+            Assert.AreEqual(4, node1.Children.Count);
+            Assert.AreEqual(1, node2.Children.Count);
+            Assert.AreEqual(2, node3.Children.Count);
+            Assert.AreEqual(1, node4.Children.Count);
+        }
+
+        [Test]
+        public void IsSameUnion_ShouldReturnTrueGivenNodeIsInSameUnion()
         {
             var node1 = new UnionFindNode<int>(1);
             var node2 = new UnionFindNode<int>(2);
@@ -155,10 +243,14 @@ namespace Utility.UnionFind
             node3.Union(node4);
             node1.Union(node3);
             Assert.True(node3.IsSameUnion(node4));
+            Assert.AreEqual(4, node1.Children.Count);
+            Assert.AreEqual(1, node2.Children.Count);
+            Assert.AreEqual(2, node3.Children.Count);
+            Assert.AreEqual(1, node4.Children.Count);
         }
 
         [Test]
-        public void IsUnion_ShouldReturnFalseGivenNodeIsNotInSameUnion()
+        public void IsSameUnion_ShouldReturnFalseGivenNodeIsNotInSameUnion()
         {
             var node1 = new UnionFindNode<int>(1);
             var node2 = new UnionFindNode<int>(2);
@@ -167,8 +259,12 @@ namespace Utility.UnionFind
             var node4 = new UnionFindNode<int>(2);
             node3.Union(node4);
             Assert.False(node2.IsSameUnion(node3));
+            Assert.AreEqual(2, node1.Children.Count);
+            Assert.AreEqual(1, node2.Children.Count);
+            Assert.AreEqual(2, node3.Children.Count);
+            Assert.AreEqual(1, node4.Children.Count);
         }
-
+        
         [Test]
         public void GivenItem_DoToUnionFindNode_ShouldReturnUnionFindNodeWithValueToItemRankToZeroParentToItsSelf()
         {
