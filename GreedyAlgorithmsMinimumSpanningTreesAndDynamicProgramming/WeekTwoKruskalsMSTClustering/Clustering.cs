@@ -1,9 +1,6 @@
 ﻿using System;
-using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using NUnit.Framework;
 using Utility.Common;
 using Utility.UnionFind;
 
@@ -46,35 +43,31 @@ namespace GreedyAlgorithmsMinimumSpanningTreesAndDynamicProgramming.WeekTwoKrusk
         public int GetSpace(List<Edge> sortedEdges, int maxClusters,
             int vertexAmount)
         {
-            var lastEdgeIndex = 0;
-            var result = InitializeClusters(vertexAmount);
-            for (var index = 0; index < sortedEdges.Count; index++)
+            var clusters = InitializeClusters(vertexAmount);
+            var count = maxClusters;
+            var space = int.MinValue;
+            foreach (var edge in sortedEdges)
             {
-                var edge = sortedEdges[index];
-                var count = result.Count(x => x.Value.Parent == x.Value);
-                if (count == maxClusters)
-                {
-                    lastEdgeIndex = index;
-                    break;
-                }
-
-                if (result[edge.Vertex1].IsSameUnion(result[edge.Vertex2]))
+                var node1 = clusters[edge.Vertex1];
+                var node2 = clusters[edge.Vertex2];
+                if (node1.IsSameUnion(node2))
                 {
                     continue;
                 }
 
-                Union(result, edge);
+                if (clusters.Count(x => x.Value.Parent == x.Value) == maxClusters)
+                {
+                    space = edge.Weight;
+                    break;
+                }
+                
+                node2.Union(node1);
+                count--;
             }
 
-            return GetMaxSpacing(result, lastEdgeIndex, sortedEdges);
+            return space;
         }
 
-        private static void Union(Dictionary<int, UnionFindNode<int>> result, Edge edge)
-        {
-            var fromNode = result[edge.Vertex1];
-            var toNode = result[edge.Vertex2];
-            toNode.Union(fromNode);
-        }
 
         private static Dictionary<int, UnionFindNode<int>> InitializeClusters(int vertexAmount)
         {
@@ -86,53 +79,5 @@ namespace GreedyAlgorithmsMinimumSpanningTreesAndDynamicProgramming.WeekTwoKrusk
 
             return result;
         }
-
-        public int GetMaxSpacing(Dictionary<int, UnionFindNode<int>> result, int startingIndex, List<Edge> sortedEdges)
-        {
-            var spacesBetweenClusters = new List<Space>();
-            for (int i = startingIndex; i < sortedEdges.Count; i++)
-            {
-                var edge = sortedEdges[i];
-                if (result[edge.Vertex1].IsSameUnion(result[edge.Vertex2]))
-                {
-                    continue;
-                }
-
-                var group1 = result[edge.Vertex1].Find();
-                var group2 = result[edge.Vertex2].Find();
-                spacesBetweenClusters.Add(new Space(group1.Value, group2.Value, edge.Weight));
-            }
-
-            return GetMaxSpacing(result, spacesBetweenClusters);
-        }
-
-        private int GetMaxSpacing(Dictionary<int, UnionFindNode<int>> result, List<Space> spacesBetweenClusters)
-        {
-            var clusters = result
-                .Where(x => x.Value.Parent == x.Value).Select(x => x.Value)
-                .ToList();
-            var max = int.MaxValue;
-            for (int i = 0; i < clusters.Count; i++)
-            {
-                int min;
-                if (i != clusters.Count - 1)
-                {
-                    min = spacesBetweenClusters.Where(x => x.Root1 == clusters[i].Value || x.Root2 == clusters[i].Value
-                        && x.Root1 == clusters[i + 1].Value || x.Root2 == clusters[i + 1].Value).Min(x => x.Weight);
-                }
-                else
-                {
-                    min = spacesBetweenClusters.Where(x => x.Root1 == clusters[i].Value || x.Root2 == clusters[i].Value
-                        && x.Root1 == clusters[0].Value || x.Root2 == clusters[0].Value).Min(x => x.Weight);
-                }
-
-                max = max < min ? max : min;
-            }
-
-            return max;
-        }
-
-
-        public record Space(int Root1, int Root2, int Weight);
     }
 }
