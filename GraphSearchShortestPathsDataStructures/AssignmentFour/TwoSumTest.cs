@@ -35,8 +35,7 @@ namespace GraphSearchShortestPathsDataStructures.AssignmentFour
                 68037543430,
                 68037543431,
             }, sut.UniqueNumbers);
-            Assert.AreEqual(new HashSet<long>{5000}, sut.Duplications);
-            
+            Assert.AreEqual(new HashSet<long> {5000}, sut.Duplications);
         }
 
         [Test]
@@ -51,7 +50,7 @@ namespace GraphSearchShortestPathsDataStructures.AssignmentFour
         public void GivenAssignmentArray_GetResult()
         {
             var input = new FileReader()
-                .ReadFile("AssignmentFour", "2sum.txt")
+                .ReadFile("2sum.txt")
                 .Select(long.Parse);
             var sut = new TwoSum(input.ToArray());
             var result = sut.GetCount();

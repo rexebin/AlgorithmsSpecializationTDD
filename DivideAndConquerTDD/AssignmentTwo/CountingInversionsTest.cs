@@ -37,7 +37,7 @@ namespace DivideAndConquerTDD.AssignmentTwo
         public void GivenTextFile_ShouldReturnSortedArrayAndCountInversions()
         {
             var sut = new CountingInversions();
-            var result = sut.SortAndCountInversions();
+            sut.SortAndCountInversions();
             var inversionsResult = sut.GetInversions();
             Assert.AreEqual(2407905288, inversionsResult);
         }

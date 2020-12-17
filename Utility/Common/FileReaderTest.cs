@@ -10,7 +10,7 @@ namespace Utility.Common
             var folderName = "Common";
             var fileName = "kargerMinCut.txt";
             var sut = new FileReader();
-            var file = sut.ReadFile(folderName, fileName);
+            var file = sut.ReadFile(fileName);
             Assert.AreEqual(200, file.Length);
         }
     }

@@ -20,7 +20,7 @@ namespace GraphSearchShortestPathsDataStructures.AssignmentTwo
 
         public static Dictionary<int, List<Vertex>> GetGraph(string filename)
         {
-            return new FileReader().ReadFile("AssignmentTwo", filename)
+            return new FileReader().ReadFile(filename)
                 .Select(x => x.TrimEnd().Split('\t'))
                 .ToDictionary(e => int.Parse(e.First()),
                     e =>

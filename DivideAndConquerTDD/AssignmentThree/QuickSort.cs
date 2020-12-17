@@ -23,7 +23,7 @@ namespace DivideAndConquerTDD.AssignmentThree
 
         public long Sort(PivotMode mode = PivotMode.FirstElement)
         {
-            var input = new FileReader().ReadFile("AssignmentThree", "QuickSort.txt")
+            var input = new FileReader().ReadFile("QuickSort.txt")
                 .Select(int.Parse).ToArray();
             var sorted = Sort(input, 0, input.Length, mode);
             return _count;

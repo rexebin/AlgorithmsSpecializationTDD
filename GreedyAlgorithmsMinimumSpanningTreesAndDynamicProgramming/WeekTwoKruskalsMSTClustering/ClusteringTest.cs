@@ -6,64 +6,50 @@ namespace GreedyAlgorithmsMinimumSpanningTreesAndDynamicProgramming.WeekTwoKrusk
 {
     public class ClusteringTest
     {
-        private List<List<int>> _graph = new();
+        private Clustering _sut = null!;
 
         [SetUp]
         public void ShouldReadFile()
         {
-            _graph = Clustering.ReadFile("clustering1.txt");
-            Assert.AreEqual(124750, _graph.Count);
-            Assert.AreEqual(new List<int> {1, 2, 6808}, _graph.First());
-            Assert.AreEqual(new List<int> {499, 500, 8273}, _graph.Last());
+            _sut = new Clustering("clusterTest.txt", 3);
         }
 
         [Test]
-        public void GivenListOfGraph_ShouldTransformToListOfEdge()
+        public void ShouldInitializeSortedByWeightEdges()
         {
-            var edges = Clustering.GetEdges(_graph);
-            Assert.AreEqual(124750, edges.Count);
-            Assert.AreEqual(1, edges.First().Vertex1);
-            Assert.AreEqual(2, edges.First().Vertex2);
-            Assert.AreEqual(6808, edges.First().Weight);
-            Assert.AreEqual(499, edges.Last().Vertex1);
-            Assert.AreEqual(500, edges.Last().Vertex2);
-            Assert.AreEqual(8273, edges.Last().Weight);
-        }
-
-        [Test]
-        public void GivenListOfEdges_ShouldReturnSortByWeightAscending()
-        {
-            var sortedEdge = Clustering.SortAscending(Clustering.GetEdges(_graph));
-            Assert.AreEqual(124750, sortedEdge.Count);
-            Assert.AreEqual(1, sortedEdge.First().Weight);
-            Assert.AreEqual(10000, sortedEdge.Last().Weight);
-        }
-
-        [Test]
-        public void GivenTestSample_ShouldReturnFourClusters()
-        {
-            
-        }
-
-        [Test]
-        public void GivenSortedUnionFindNodes_ShouldToThroughEachNodeAscendingUntilFourLeft()
-        {
-            var testGraph = Clustering.ReadFile("clusterTest.txt");
-            var graph = Clustering.SortAscending(
-                Clustering.GetEdges(testGraph));
-            var sut = new Clustering();
-            var space = sut.GetSpace(graph,3 ,12);
-            Assert.AreEqual(10, space);
+            Assert.AreEqual(18, _sut.Edges.Count);
+            Assert.AreEqual(2, _sut.Edges.First().Vertex1);
+            Assert.AreEqual(4, _sut.Edges.First().Vertex2);
+            Assert.AreEqual(1, _sut.Edges.First().Weight);
+            Assert.AreEqual(7, _sut.Edges.Last().Vertex1);
+            Assert.AreEqual(10, _sut.Edges.Last().Vertex2);
+            Assert.AreEqual(20, _sut.Edges.Last().Weight);
         }
         
         [Test]
+        public void ShouldInitializeClusters()
+        {
+            Assert.AreEqual(12, _sut.Clusters.Count);
+        }
+        
+        [Test]
+        public void ShouldInitializeVertexQuantity()
+        {
+            Assert.AreEqual(12, _sut.VertexQuantity);
+        }
+
+        [Test]
+        public void GivenTestSample_ShouldToThroughEachNodeAscendingUntilThreeLeft()
+        {
+            var space = _sut.GetSpace();
+            Assert.AreEqual(10, space);
+        }
+
+        [Test]
         public void Given500SortedUnionFindNodes_ShouldToThroughEachNodeAscendingUntilFourLeft()
         {
-            var graph = Clustering.SortAscending(
-                Clustering.GetEdges(_graph));
-            var sut = new Clustering();
-            var space = sut.GetSpace(graph,4 ,500);
-            Assert.AreEqual(106, space);
+            var sut = new Clustering("clustering1.txt", 4);
+            Assert.AreEqual(106, sut.GetSpace());
         }
     }
 }

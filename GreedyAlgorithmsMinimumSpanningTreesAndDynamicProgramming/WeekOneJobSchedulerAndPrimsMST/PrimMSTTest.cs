@@ -31,7 +31,7 @@ namespace GreedyAlgorithmsMinimumSpanningTreesAndDynamicProgramming.WeekOneJobSc
 
         private static List<List<int>> ReadGraph(string filename)
         {
-            return new FileReader().ReadFile("WeekOneJobSchedulerAndPrimsMST", filename)
+            return new FileReader().ReadFile(filename)
                 .Skip(1).Select(x => x.Split(" ").Select(int.Parse).ToList()).ToList();
         }
 

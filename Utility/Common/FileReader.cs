@@ -1,18 +1,15 @@
 ﻿using System;
 using System.IO;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace Utility.Common
 {
     public class FileReader
     {
-        public string GetPath(string folderName, string fileName)
+        public string[] ReadFile(string fileName, [CallerFilePath] string path = null!)
         {
-            return Path.GetFullPath(@$"../../../{folderName}/{fileName}", Environment.CurrentDirectory);
-        }
-
-        public string[] ReadFile(string folderName, string fileName)
-        {
-            return File.ReadAllLines(GetPath(folderName, fileName));
+            return File.ReadAllLines(Path.GetFullPath(path + $"../../{fileName}"));
         }
     }
 }

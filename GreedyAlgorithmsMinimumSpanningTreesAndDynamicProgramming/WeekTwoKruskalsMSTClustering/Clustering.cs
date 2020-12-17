@@ -6,78 +6,79 @@ using Utility.UnionFind;
 
 namespace GreedyAlgorithmsMinimumSpanningTreesAndDynamicProgramming.WeekTwoKruskalsMSTClustering
 {
-    public class Edge
-    {
-        public int Vertex1 { get; }
-        public int Vertex2 { get; }
-        public int Weight { get; }
-
-        public Edge(int vertex1, int vertex2, int weight)
-        {
-            Vertex1 = vertex1;
-            Vertex2 = vertex2;
-            Weight = weight;
-        }
-    }
-
     public class Clustering
     {
-        public static List<Edge> GetEdges(List<List<int>> graph)
+        private readonly int _maxClusterQuantity;
+        public Dictionary<int, UnionFindNode<int>> Clusters { get; }
+        public List<Edge> Edges { get; }
+        public readonly int VertexQuantity;
+
+        public Clustering(string filename, int maxClusterQuantity)
         {
-            return graph.Select(x => new Edge(x[0], x[1], x[2])).ToList();
+            _maxClusterQuantity = maxClusterQuantity;
+            Edges = GetSortedEdgesFromFile(filename, out VertexQuantity);
+            Clusters = InitialiseClusters(VertexQuantity);
         }
 
-        public static List<List<int>> ReadFile(string filename)
+        private List<Edge> GetSortedEdgesFromFile(string filename, out int vertexQuantity)
         {
-            return new FileReader().ReadFile("WeekTwoKruskalsMSTClustering", filename)
+            var content = new FileReader().ReadFile(filename);
+            vertexQuantity = int.Parse(content.First());
+            return GetEdgesSortedAscending(GetEdges(content));
+        }
+
+        private List<List<int>> GetEdges(string[] content)
+        {
+            return content
                 .Skip(1)
                 .Select(x => x.Split(" ").Select(int.Parse).ToList()).ToList();
         }
 
-        public static List<Edge> SortAscending(List<Edge> edges)
+        private List<Edge> GetEdgesSortedAscending(List<List<int>> graph)
         {
-            return edges.OrderBy(x => x.Weight).ToList();
+            return graph.Select(x => new Edge(x[0], x[1], x[2]))
+                .OrderBy(x => x.Weight)
+                .ToList();
         }
 
-
-        public int GetSpace(List<Edge> sortedEdges, int maxClusters,
-            int vertexAmount)
+        private Dictionary<int, UnionFindNode<int>> InitialiseClusters(int vertexQuantity)
         {
-            var clusters = InitializeClusters(vertexAmount);
-            var count = maxClusters;
-            var space = int.MinValue;
-            foreach (var edge in sortedEdges)
-            {
-                var node1 = clusters[edge.Vertex1];
-                var node2 = clusters[edge.Vertex2];
-                if (node1.IsSameUnion(node2))
-                {
-                    continue;
-                }
+            return Enumerable.Range(1, vertexQuantity)
+                .ToDictionary(e => e, UnionFindNode<int>.Parse);
+        }
 
-                if (clusters.Count(x => x.Value.Parent == x.Value) == maxClusters)
+        public int GetSpace()
+        {
+            var clusterCount = VertexQuantity;
+            var clusterSpace = int.MinValue;
+            foreach (var edge in Edges)
+            {
+                if (AreEdgeVerticesSameUnion(edge)) continue;
+                if (clusterCount == _maxClusterQuantity)
                 {
-                    space = edge.Weight;
+                    clusterSpace = edge.Weight;
                     break;
                 }
-                
-                node2.Union(node1);
-                count--;
+
+                Union(edge);
+                clusterCount--;
             }
 
-            return space;
+            return clusterSpace;
         }
 
-
-        private static Dictionary<int, UnionFindNode<int>> InitializeClusters(int vertexAmount)
+        private void Union(Edge edge)
         {
-            var result = new Dictionary<int, UnionFindNode<int>>();
-            for (int i = 1; i <= vertexAmount; i++)
-            {
-                result.Add(i, UnionFindNode<int>.Parse(i));
-            }
+            var edgeNode1 = Clusters[edge.Vertex1];
+            var edgeNode2 = Clusters[edge.Vertex2];
+            edgeNode1.Union(edgeNode2);
+        }
 
-            return result;
+        private bool AreEdgeVerticesSameUnion(Edge edge)
+        {
+            var edgeNode1 = Clusters[edge.Vertex1];
+            var edgeNode2 = Clusters[edge.Vertex2];
+            return edgeNode1.IsSameUnion(edgeNode2);
         }
     }
 }

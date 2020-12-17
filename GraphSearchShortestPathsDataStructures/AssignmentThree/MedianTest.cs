@@ -42,7 +42,7 @@ namespace GraphSearchShortestPathsDataStructures.AssignmentThree
         public void GivenFile_ShouldReturnSumOfMedianModuloByTenThousands()
         {
             var input = new FileReader()
-                .ReadFile("AssignmentThree", "Median.txt")
+                .ReadFile("Median.txt")
                 .Select(int.Parse).ToArray();
             Assert.AreEqual(10000, input.Length);
             var sut = new Median();

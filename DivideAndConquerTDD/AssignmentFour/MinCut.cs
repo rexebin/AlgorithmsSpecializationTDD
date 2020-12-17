@@ -21,7 +21,7 @@ namespace DivideAndConquerTDD.AssignmentFour
 
         public static Dictionary<int, List<int>> ReadFile()
         {
-            var list = new FileReader().ReadFile("AssignmentFour", "kargerMinCut.txt")
+            var list = new FileReader().ReadFile("kargerMinCut.txt")
                 .Select(x => x.TrimEnd().Split('\t').ToList());
             return list.ToDictionary(entry => int.Parse(entry.First()),
                 entry => entry.Skip(1).Take(entry.Count).Select(x => int.Parse(x)).ToList());

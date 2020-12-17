@@ -10,7 +10,7 @@ namespace GraphSearchShortestPathsDataStructures.AssignmentOne
         public static int[][] ReadFile(string filename)
         {
             return new FileReader()
-                .ReadFile("AssignmentOne", filename)
+                .ReadFile(filename)
                 .Select(x => x.TrimEnd().Split(' ')
                     .Select(int.Parse)
                     .ToArray()).ToArray();
