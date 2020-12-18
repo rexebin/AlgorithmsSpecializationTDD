@@ -11,7 +11,7 @@ namespace GreedyAlgorithmsMinimumSpanningTreesAndDynamicProgramming.WeekTwoKrusk
         [SetUp]
         public void ShouldReadFile()
         {
-            _sut = new Clustering("clusterTest.txt", 3);
+            _sut = new Clustering("ClusterTest.txt", 3);
         }
 
         [Test]
@@ -48,7 +48,7 @@ namespace GreedyAlgorithmsMinimumSpanningTreesAndDynamicProgramming.WeekTwoKrusk
         [Test]
         public void Given500SortedUnionFindNodes_ShouldToThroughEachNodeAscendingUntilFourLeft()
         {
-            var sut = new Clustering("clustering1.txt", 4);
+            var sut = new Clustering("Clustering1.txt", 4);
             Assert.AreEqual(106, sut.GetSpace());
         }
     }

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Utility.DataStructures
+namespace Utility.Heaps
 {
     public interface IHeap<T> where T : IComparable<T>
     {

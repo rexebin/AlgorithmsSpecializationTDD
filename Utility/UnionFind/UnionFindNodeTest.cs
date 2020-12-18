@@ -1,5 +1,5 @@
 ﻿using NUnit.Framework;
-using Utility.DataStructures;
+using Utility.Heaps;
 
 namespace Utility.UnionFind
 {

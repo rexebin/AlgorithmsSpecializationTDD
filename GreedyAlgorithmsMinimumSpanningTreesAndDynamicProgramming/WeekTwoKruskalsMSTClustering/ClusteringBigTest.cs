@@ -63,7 +63,7 @@ namespace GreedyAlgorithmsMinimumSpanningTreesAndDynamicProgramming.WeekTwoKrusk
         public void ShouldReadFile_ParseToUniqueString()
         {
             var sut = new ClusteringBig();
-            var graph = sut.ReadFile("clustering_big.txt");
+            var graph = sut.ReadFile("ClusteringBig.txt");
             Assert.AreEqual("111000001101001111001111", graph.First());
         }
 
@@ -71,7 +71,7 @@ namespace GreedyAlgorithmsMinimumSpanningTreesAndDynamicProgramming.WeekTwoKrusk
         public void ShouldInitializeClustersPerNode()
         {
             var sut = new ClusteringBig();
-            var graph = sut.ReadFile("clustering_big.txt");
+            var graph = sut.ReadFile("ClusteringBig.txt");
             var clusters = sut.GetInitialClusters(graph);
             Assert.AreEqual(graph.Count, clusters.Count);
             Assert.AreEqual("111000001101001111001111", clusters["111000001101001111001111"].Value);
@@ -81,7 +81,7 @@ namespace GreedyAlgorithmsMinimumSpanningTreesAndDynamicProgramming.WeekTwoKrusk
         public void ShouldCalculateClusterQuantity()
         {
             var sut = new ClusteringBig();
-            var quantity = sut.GetClusterQuantity("clustering_big.txt", 3);
+            var quantity = sut.GetClusterQuantity("ClusteringBig.txt", 3);
             Assert.AreEqual(6118, quantity);
         }
     }

@@ -7,7 +7,6 @@ namespace Utility.Common
         [Test]
         public void GivenFolderNameAndFileName_ShouldReadFile()
         {
-            var folderName = "Common";
             var fileName = "kargerMinCut.txt";
             var sut = new FileReader();
             var file = sut.ReadFile(fileName);

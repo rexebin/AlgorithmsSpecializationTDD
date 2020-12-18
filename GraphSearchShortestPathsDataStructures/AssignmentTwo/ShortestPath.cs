@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using Utility.Common;
-using Utility.DataStructures;
 using Utility.GraphModels;
+using Utility.Heaps;
 
 namespace GraphSearchShortestPathsDataStructures.AssignmentTwo
 {

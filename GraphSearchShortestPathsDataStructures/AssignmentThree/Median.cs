@@ -1,4 +1,4 @@
-﻿using Utility.DataStructures;
+﻿using Utility.Heaps;
 
 namespace GraphSearchShortestPathsDataStructures.AssignmentThree
 {

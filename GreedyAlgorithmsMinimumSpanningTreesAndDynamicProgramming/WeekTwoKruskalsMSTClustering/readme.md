@@ -1,2 +1,2 @@
-﻿![](./clustering.png)
-![](./clustering_big.png)
+﻿![](./Clustering.png)
+![](./ClusteringBig.png)

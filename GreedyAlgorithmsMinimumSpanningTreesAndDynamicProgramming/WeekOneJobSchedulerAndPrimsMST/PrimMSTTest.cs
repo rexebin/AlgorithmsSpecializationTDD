@@ -2,8 +2,8 @@
 using System.Linq;
 using NUnit.Framework;
 using Utility.Common;
-using Utility.DataStructures;
 using Utility.GraphModels;
+using Utility.Heaps;
 
 namespace GreedyAlgorithmsMinimumSpanningTreesAndDynamicProgramming.WeekOneJobSchedulerAndPrimsMST
 {
