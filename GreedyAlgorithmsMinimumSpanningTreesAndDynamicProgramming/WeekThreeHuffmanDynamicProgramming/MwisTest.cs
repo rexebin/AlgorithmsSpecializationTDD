@@ -17,7 +17,7 @@ namespace GreedyAlgorithmsMinimumSpanningTreesAndDynamicProgramming.WeekThreeHuf
         }
 
         [Test]
-        public void Should_GetMaxIndependentWeights()
+        public void Should_GetMaxIndependentWeightSets_AsIndexAndValueDictionary()
         {
             var sut = new Mwis
                 (new List<int> {1, 4, 1, 1, 3, 7, 8, 9, 9, 5, 4, 2});
